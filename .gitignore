@@ -1,0 +1,22 @@
+# Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Large binary files / Dependencies
+*.apk
+*.tgz
+*.tar.gz
+*.zip
+mac/
+
+# User data / Configs
+saved_charts.json
+debug_output.txt
+year_map.json
