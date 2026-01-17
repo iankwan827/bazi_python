@@ -1,0 +1,50 @@
+name: Build macOS App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller PySide6 lunar_python
+
+    - name: Build with PyInstaller
+      run: |
+        # Use the spec file if it exists, otherwise use the script
+        if [ -f "BaziChart.spec" ]; then
+          python -m PyInstaller BaziChart.spec
+        else
+          python -m PyInstaller --noconsole --onefile --windowed --name="BaziChart" --add-data "styles.qss:." run_app.py
+        fi
+
+    - name: Package App
+      run: |
+        cd dist
+        # PyInstaller with --windowed on Mac creates a .app directory
+        if [ -d "BaziChart.app" ]; then
+          zip -r BaziChart_mac.zip BaziChart.app
+        else
+          # Fallback for single file binary
+          zip BaziChart_mac.zip BaziChart
+        fi
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: BaziChart-MacOS
+        path: dist/BaziChart_mac.zip
