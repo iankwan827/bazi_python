@@ -5,6 +5,8 @@ from PySide6.QtCore import Qt, QFile, QTextStream
 
 from input_page import InputPage
 from chart_view import ChartPage
+from detailed_view import DetailedAnalysisPage
+from judgment_formulas_page import JudgmentFormulasPage
 
 class TopNavBar(QFrame):
     def __init__(self, parent=None):
@@ -20,7 +22,7 @@ class TopNavBar(QFrame):
         self.buttons = []
         self.btn_group = []
         
-        labels = ["基本信息", "基本排盘", "专业细盘", "断事笔记"]
+        labels = ["基本信息", "基本排盘", "专业细盘", "断事口诀"]
         
         for i, text in enumerate(labels):
             btn = QPushButton(text)
@@ -69,20 +71,18 @@ class MainWindow(QMainWindow):
         # Pages
         self.input_page = InputPage(self.on_calculate)
         self.chart_page = ChartPage(self.on_back)
+        self.prof_page = DetailedAnalysisPage()
         
-        # Placeholders
-        self.prof_page = QLabel("专业细盘 - 开发中")
-        self.prof_page.setAlignment(Qt.AlignCenter)
-        self.prof_page.setStyleSheet("font-size: 24px; color: #666;")
+        # Connect Active Luck Update
+        self.chart_page.activePillarsChanged.connect(self.prof_page.set_active_luck)
         
-        self.notes_page = QLabel("断事笔记 - 开发中")
-        self.notes_page.setAlignment(Qt.AlignCenter)
-        self.notes_page.setStyleSheet("font-size: 24px; color: #666;")
+        # Judgment Formulas Page
+        self.formulas_page = JudgmentFormulasPage()
         
         self.stack.addWidget(self.input_page) # 0
         self.stack.addWidget(self.chart_page) # 1
         self.stack.addWidget(self.prof_page)  # 2
-        self.stack.addWidget(self.notes_page) # 3
+        self.stack.addWidget(self.formulas_page) # 3
         
     def switch_tab(self, idx):
         self.stack.setCurrentIndex(idx)
@@ -90,6 +90,8 @@ class MainWindow(QMainWindow):
     def on_calculate(self, data):
         # Calculate Logic
         self.chart_page.render_data(data)
+        self.prof_page.render_data(data)
+        self.formulas_page.render_data(data)
         
         # Switch to Chart Tab (Index 1)
         self.stack.setCurrentIndex(1)

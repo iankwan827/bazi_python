@@ -314,7 +314,9 @@ class InputPage(QWidget):
             
             # Set Gender
             gender_txt = record.get('gender', '男')
-            idx = 0 if gender_txt == '男' else 1
+            # Handle both '男'/'女' and 'M'/'F'
+            is_male = str(gender_txt).upper() in ['男', 'M', 'MALE']
+            idx = 0 if is_male else 1
             self.gender_combo.setCurrentIndex(idx)
             
             # Switch to Date Mode

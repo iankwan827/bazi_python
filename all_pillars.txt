@@ -1,0 +1,338 @@
+bazi_logic.py:595:def get_stem_interactions_map(pillars):
+bazi_logic.py:599:    stems = [p['gan'] for p in pillars]
+bazi_logic.py:611:    mz = pillars[1]['zhi'] if len(pillars) > 1 else None
+bazi_logic.py:622:            # - Within 4 pillars (0-3): only adjacent (dist=1) interact.
+bazi_logic.py:647:def get_interactions(pillars):
+bazi_logic.py:648:    stems = [p['gan'] for p in pillars]
+bazi_logic.py:649:    branches = [p['zhi'] for p in pillars]
+bazi_logic.py:690:                    if len(pillars) > 1:
+bazi_logic.py:691:                        mz = pillars[1]['zhi']
+bazi_logic.py:853:    def check_double_chong(idx1, idx2, pillars, gan_chong, zhi_chong_list):
+bazi_logic.py:854:        if idx1 >= len(pillars) or idx2 >= len(pillars): return False
+bazi_logic.py:855:        p1 = pillars[idx1]
+bazi_logic.py:856:        p2 = pillars[idx2]
+bazi_logic.py:868:    # Only check if we have enough pillars (at least 4 for original bazi)
+bazi_logic.py:869:    if len(pillars) >= 4:
+bazi_logic.py:871:        if check_double_chong(2, 1, pillars, gan_chong_pairs, liu_chong_pairs):
+bazi_logic.py:875:        if check_double_chong(0, 2, pillars, gan_chong_pairs, liu_chong_pairs):
+bazi_logic.py:879:        if check_double_chong(0, 3, pillars, gan_chong_pairs, liu_chong_pairs):
+bazi_logic.py:883:        if check_double_chong(1, 3, pillars, gan_chong_pairs, liu_chong_pairs):
+bazi_logic.py:924:    processed_pillars = []
+bazi_logic.py:943:        processed_pillars.append({
+bazi_logic.py:1063:    interactions = get_interactions(processed_pillars)
+bazi_logic.py:1066:        'pillars': processed_pillars,
+bazi_logic.py:1075:def get_dynamic_interactions(pillars, dynamic_indices):
+bazi_logic.py:1077:    Calculate interactions but ONLY return those that involve pillars at dynamic_indices.
+bazi_logic.py:1078:    pillars: list of all pillars (e.g. 4 original + 1 DY + 1 LN)
+bazi_logic.py:1081:    stems = [p['gan'] for p in pillars]
+bazi_logic.py:1082:    branches = [p['zhi'] for p in pillars]
+bazi_logic.py:1186:def get_gong_jia_relations(pillars):
+bazi_logic.py:1187:    if not pillars or len(pillars) < 4:
+bazi_logic.py:1191:    # indices in pillars list.
+bazi_logic.py:1217:            p1 = pillars[i]
+bazi_logic.py:1218:            p2 = pillars[j]
+bazi_logic.py:1285:def calculate_body_strength(pillars):
+bazi_logic.py:1287:    Calculates Strength. Supports 4 (Yuan Ju) or 6 (Dynamic) pillars.
+bazi_logic.py:1291:    dm = pillars[2]['gan']
+bazi_logic.py:1316:    stem_mods = get_stem_interactions_map(pillars)
+bazi_logic.py:1330:    if len(pillars) > 4:
+bazi_logic.py:1335:        if idx >= len(pillars): continue
+bazi_logic.py:1337:        gan = pillars[idx]['gan']
+bazi_logic.py:1368:                zhi = pillars[idx]['zhi']
+bazi_logic.py:1381:    mz = pillars[1]['zhi']
+bazi_logic.py:1392:            mg = pillars[1]['gan']
+bazi_logic.py:1393:            dz = pillars[2]['zhi']
+bazi_logic.py:1404:    dz = pillars[2]['zhi']
+bazi_logic.py:1412:        if idx >= len(pillars): continue
+bazi_logic.py:1414:        z = pillars[idx]['zhi']
+bazi_logic.py:1419:    if len(pillars) > 4:
+bazi_logic.py:1422:        if is_same_party(ZHI_WX.get(pillars[4]['zhi'])):
+bazi_logic.py:1427:        if len(pillars) > 5 and pillars[5]: 
+bazi_logic.py:1429:            if is_same_party(ZHI_WX.get(pillars[5]['zhi'])):
+bazi_logic.py:1448:    if len(pillars) > 5:
+bazi_logic.py:1449:        dy = pillars[4]
+bazi_logic.py:1450:        ln = pillars[5]
+bazi_logic.py:1451:        month = pillars[1]
+bazi_logic.py:1483:def calculate_global_scores(pillars):
+bazi_logic.py:1488:    stem_mods = get_stem_interactions_map(pillars)
+bazi_logic.py:1490:    for idx, p in enumerate(pillars):
+bazi_logic.py:1516:def get_five_element_profile(pillars):
+bazi_logic.py:1517:    scores = calculate_global_scores(pillars)
+bazi_logic.py:1519:    dm = pillars[2]['gan']
+bazi_logic.py:1561:def calculate_yong_xi_ji(pillars, bs_result):
+bazi_logic.py:1562:    scores = calculate_global_scores(pillars)
+bazi_logic.py:1596:    mz = pillars[1]['zhi']
+bazi_logic.py:1625:    dm = pillars[2]['gan']
+bazi_logic.py:1742:        mz = pillars[1]['zhi']
+chart_view.py:296:        # Clear previous mid/bot layouts (Top is cleared in render_main_pillars)
+chart_view.py:322:        self.render_main_pillars(current_dy, current_ln)
+chart_view.py:338:    def render_interactions(self, original_inter, dynamic_pillars=None):
+chart_view.py:340:        # dynamic_pillars: list of [dy, ln] objects (normalized)
+chart_view.py:385:        if dynamic_pillars:
+chart_view.py:388:            # data['pillars'] has 4. dynamic_pillars has 2.
+chart_view.py:391:            # Our normalized pillars have 'gan', 'zhi'.
+chart_view.py:392:            # Original pillars in self.current_data['pillars'] also have 'gan', 'zhi'.
+chart_view.py:394:            all_pillars = self.current_data['pillars'] + dynamic_pillars
+chart_view.py:395:            dyn_res = get_dynamic_interactions(all_pillars, [4, 5])
+chart_view.py:401:            dy_gan_zhi = f"{dynamic_pillars[0]['gan']}{dynamic_pillars[0]['zhi']}"
+chart_view.py:402:            ln_gan_zhi = f"{dynamic_pillars[1]['gan']}{dynamic_pillars[1]['zhi']}"
+chart_view.py:446:    def render_main_pillars(self, dy_obj, ln_obj):
+chart_view.py:453:        cols_data = self.current_data['pillars'] + [col_dy, col_ln]
+chart_view.py:760:        # Refresh the main chart pillars with the selected Luck context
+chart_view.py:761:        self.render_main_pillars(da_yun_data, liu_nian_data)
+debug_issue.py:22:for p in res['pillars']:
+debug_repro.py:13:    pillars = bazi_result['pillars']
+debug_repro.py:14:    print("Pillars:", [p['gan'] + p['zhi'] for p in pillars])
+debug_repro.py:16:    # Calculate Body Strength (Original 4 pillars)
+debug_repro.py:17:    bs = calculate_body_strength(pillars)
+debug_repro.py:25:    result = calculate_yong_xi_ji(pillars, bs)
+debug_repro.py:34:    scores = calculate_global_scores(pillars)
+debug_repro.py:53:    mz = pillars[1]['zhi']
+debug_reverse_check.py:8:    target_pillars = "Â£¨Âçà Â£¨ÂØÖ ‰∏ÅÊú™ Ëæõ‰∏ë"
+debug_reverse_check.py:9:    print(f"Target: {target_pillars}")
+debug_reverse_check.py:25:        current_pillars = f"{y} {m} {d} {t}"
+debug_reverse_check.py:28:            print(f"[{curr}] {current_pillars}  <-- Found Ding Wei Day")
+debug_reverse_check.py:30:        if current_pillars == target_pillars:
+debug_specific_case.py:12:    pillars = [
+debug_specific_case.py:40:    results = life_death_analysis.check_eating_god_meets_owl(pillars)
+debug_specific_case.py:46:    stems_ten_gods = [p['tenGod'] for p in pillars]
+debug_specific_case.py:54:    def has_root(god_keywords, pillars):
+debug_specific_case.py:55:        for p in pillars:
+debug_specific_case.py:60:    e_rooted = has_root(eating_keywords, pillars)
+debug_specific_case.py:61:    o_rooted = has_root(owl_keywords, pillars)
+detailed_view.py:67:        # data['pillars'] is list of 4 dicts.
+detailed_view.py:71:        # Or better, the chart_view should pass the 'active' pillars. 
+detailed_view.py:74:        pillars_4 = data['pillars']
+detailed_view.py:148:        # Construct 6 pillars
+detailed_view.py:150:        # existing pillars have these.
+detailed_view.py:153:        full_pillars = [p for p in pillars_4]
+detailed_view.py:156:            full_pillars.append(self.format_luck_pillar(current_dy))
+detailed_view.py:158:            full_pillars.append(self.format_luck_pillar(current_ln))
+detailed_view.py:160:        # DEBUG: Print pillars passed to analysis
+detailed_view.py:161:        for idx, p in enumerate(full_pillars):
+detailed_view.py:165:        results = life_death_analysis.analyze_risks(full_pillars, data.get('info'))
+detailed_view.py:283:        # But wait, analyze_risks() triggers check_eating_god_meets_owl_logic() based on 4 pillars.
+detailed_view.py:285:        # Actually analyze_risks passes 'pillars'. 
+detailed_view.py:286:        # If the user is just viewing the chart, 'pillars' usually has 4 items (Year, Month, Day, Hour).
+detailed_view.py:290:        # So for 4 pillars, it returns Static results (indices 0-3).
+find_secret_dates.py:12:def get_processed_pillars(solar):
+find_secret_dates.py:28:    pillars = []
+find_secret_dates.py:51:        pillars.append({
+find_secret_dates.py:60:    return pillars
+find_secret_dates.py:78:        pillars = get_processed_pillars(solar)
+find_secret_dates.py:81:        p0_ten = pillars[0]['tenGod']
+find_secret_dates.py:82:        p1_ten = pillars[1]['tenGod']
+find_secret_dates.py:84:            stems_ten = [p['tenGod'] for p in pillars]
+find_secret_dates.py:89:                for p in pillars:
+find_secret_dates.py:101:        y_hidden = pillars[0]['hidden']
+find_secret_dates.py:102:        m_hidden = pillars[1]['hidden']
+find_secret_dates.py:119:        y_ny = get_nayin_element(pillars[0]['naYin'])
+find_secret_dates.py:120:        m_ny = get_nayin_element(pillars[1]['naYin'])
+find_spouse_secrets.py:8:# Mock processed pillars structure for analysis
+find_spouse_secrets.py:10:    pillars = []
+find_spouse_secrets.py:11:    for p in chart['pillars']:
+find_spouse_secrets.py:13:         pillars.append({
+find_spouse_secrets.py:20:    return analyze_risks(pillars)
+find_spouse_secrets.py:49:                    print(f"Chart: {chart['pillars'][0]['ganZhi']} {chart['pillars'][1]['ganZhi']} {chart['pillars'][2]['ganZhi']} {chart['pillars'][3]['ganZhi']}")
+find_spouse_secrets.py:60:                dm = chart['pillars'][2]['gan']
+find_spouse_secrets.py:61:                dz = chart['pillars'][2]['zhi']
+find_spouse_secrets.py:72:                            print(f"Chart: {chart['pillars'][0]['ganZhi']} {chart['pillars'][1]['ganZhi']} {chart['pillars'][2]['ganZhi']} {chart['pillars'][3]['ganZhi']}")
+fix_py_logic.py:19:    if len(processed_pillars) >= 4:
+fix_py_logic.py:37:        check_pillars = [
+fix_py_logic.py:44:        for item in check_pillars:
+fix_py_logic.py:45:            p = processed_pillars[item['idx']]
+fix_py_logic.py:106:    if len(processed_pillars) >= 4:
+fix_py_logic.py:124:        check_pillars = [
+fix_py_logic.py:131:        for item in check_pillars:
+fix_py_logic.py:132:            p = processed_pillars[item['idx']]
+generate_year_map.py:26:    print(f"Generated map for {len(year_map)} pillars.")
+judgment_formulas_page.py:47:        pillars = data.get('pillars', [])
+judgment_formulas_page.py:50:        bs = calculate_body_strength(pillars) # Just 4 pillars
+judgment_formulas_page.py:51:        yxj = calculate_yong_xi_ji(pillars, bs)
+judgment_formulas_page.py:52:        profile = get_five_element_profile(pillars)
+judgment_formulas_page.py:95:             calc_pillars_6 = pillars[:]
+judgment_formulas_page.py:96:             calc_pillars_6.append(dy_pillar)
+judgment_formulas_page.py:97:             calc_pillars_6.append(ln_pillar)
+judgment_formulas_page.py:99:             bs6 = calculate_body_strength(calc_pillars_6)
+judgment_formulas_page.py:100:             yxj6 = calculate_yong_xi_ji(calc_pillars_6, bs6)
+judgment_formulas_page.py:101:             profile6 = get_five_element_profile(calc_pillars_6)
+judgment_formulas_page.py:135:        gj = get_gong_jia_relations(pillars)
+judgment_formulas_page.py:162:        interactions = get_interactions(pillars)
+life_death_analysis.py:115:def check_eating_god_meets_owl(processed_pillars):
+life_death_analysis.py:116:    return check_owl_devours_eating_god_logic(processed_pillars)
+life_death_analysis.py:118:def analyze_risks(processed_pillars, info=None):
+life_death_analysis.py:127:    egmo = check_owl_devours_eating_god_logic(processed_pillars)
+life_death_analysis.py:131:    yrc = check_yang_ren_chong(processed_pillars)
+life_death_analysis.py:142:    if len(processed_pillars) >= 2:
+life_death_analysis.py:143:        p0_ten = processed_pillars[0].get('tenGod', '')
+life_death_analysis.py:144:        p1_ten = processed_pillars[1].get('tenGod', '')
+life_death_analysis.py:147:            stems_ten = [p.get('tenGod', '') for p in processed_pillars[:4]]
+life_death_analysis.py:158:    if len(processed_pillars) >= 2:
+life_death_analysis.py:159:        y_hidden = processed_pillars[0].get('hidden', [])
+life_death_analysis.py:160:        m_hidden = processed_pillars[1].get('hidden', [])
+life_death_analysis.py:173:    if len(processed_pillars) >= 2:
+life_death_analysis.py:174:        p0_ten = processed_pillars[0].get('tenGod', '')
+life_death_analysis.py:175:        p1_ten = processed_pillars[1].get('tenGod', '')
+life_death_analysis.py:195:        for i in range(min(4, len(processed_pillars))):
+life_death_analysis.py:196:            hidden = processed_pillars[i].get('hidden', [])
+life_death_analysis.py:218:    if star_idx != -1 and star_idx < len(processed_pillars):
+life_death_analysis.py:219:        target_zhi = processed_pillars[star_idx]['zhi']
+life_death_analysis.py:220:        for i in range(min(4, len(processed_pillars))):
+life_death_analysis.py:222:            other_zhi = processed_pillars[i]['zhi']
+life_death_analysis.py:230:    if len(processed_pillars) > 1:
+life_death_analysis.py:231:        m_zhi = processed_pillars[1].get('zhi')
+life_death_analysis.py:233:            for i in range(min(4, len(processed_pillars))):
+life_death_analysis.py:235:                other_zhi = processed_pillars[i]['zhi']
+life_death_analysis.py:260:    for p in processed_pillars[:4]:
+life_death_analysis.py:274:    if len(processed_pillars) >= 4:
+life_death_analysis.py:275:        h_pillar = processed_pillars[3]
+life_death_analysis.py:295:    if len(processed_pillars) >= 3:
+life_death_analysis.py:296:        dm_gan = processed_pillars[2]['gan']
+life_death_analysis.py:297:        day_zhi = processed_pillars[2]['zhi']
+life_death_analysis.py:310:                if idx < len(processed_pillars) and processed_pillars[idx]['zhi'] == sheep_blade_zhi:
+life_death_analysis.py:322:    if len(processed_pillars) >= 4:
+life_death_analysis.py:323:        d_zhi = processed_pillars[2]['zhi']
+life_death_analysis.py:324:        m_zhi = processed_pillars[1]['zhi']
+life_death_analysis.py:325:        h_zhi = processed_pillars[3]['zhi']
+life_death_analysis.py:343:    day_gan = processed_pillars[2]['gan'] if len(processed_pillars) > 2 else None
+life_death_analysis.py:348:            if idx < len(processed_pillars) and processed_pillars[idx]['gan'] == combine_gan:
+life_death_analysis.py:375:    d_zhi = processed_pillars[2]['zhi']
+life_death_analysis.py:376:    d_shen_sha = processed_pillars[2].get('shen_sha', [])
+life_death_analysis.py:380:            if idx < len(processed_pillars):
+life_death_analysis.py:381:                target_zhi = processed_pillars[idx]['zhi']
+life_death_analysis.py:396:    if len(processed_pillars) >= 4:
+life_death_analysis.py:397:        h_zhi = processed_pillars[3]['zhi']
+life_death_analysis.py:410:    if is_female and len(processed_pillars) >= 4:
+life_death_analysis.py:411:        h_hidden = processed_pillars[3].get('hidden', [])
+life_death_analysis.py:417:                hidden = processed_pillars[idx].get('hidden', [])
+life_death_analysis.py:431:    if len(processed_pillars) >= 4:
+life_death_analysis.py:432:        d_pillar = processed_pillars[2]
+life_death_analysis.py:433:        h_zhi = processed_pillars[3]['zhi']
+life_death_analysis.py:447:    if len(processed_pillars) >= 2:
+life_death_analysis.py:448:        y_zhi = processed_pillars[0]['zhi']
+life_death_analysis.py:449:        m_zhi = processed_pillars[1]['zhi']
+life_death_analysis.py:461:    if len(processed_pillars) >= 4:
+life_death_analysis.py:465:            gan = processed_pillars[idx].get('gan')
+life_death_analysis.py:481:    if len(processed_pillars) >= 4:
+life_death_analysis.py:482:        original_zhis = [p.get('zhi') for p in processed_pillars[:4]]
+life_death_analysis.py:505:    if len(processed_pillars) >= 4:
+life_death_analysis.py:506:        mao_count = sum(1 for p in processed_pillars[:4] if p.get('zhi') == 'Âç?)
+life_death_analysis.py:517:    if len(processed_pillars) >= 4:
+life_death_analysis.py:523:        dm_gan = processed_pillars[2].get('gan')
+life_death_analysis.py:526:            lu_count = sum(1 for p in processed_pillars[:4] if p.get('zhi') == lu_zhi)
+life_death_analysis.py:536:    if len(processed_pillars) >= 4:
+life_death_analysis.py:538:        yima_count = sum(1 for p in processed_pillars[:4] if p.get('zhi') in yima_branches)
+life_death_analysis.py:549:    if len(processed_pillars) >= 4:
+life_death_analysis.py:560:        y_stem_cat = get_category(processed_pillars[0].get('tenGod'))
+life_death_analysis.py:561:        h_stem_cat = get_category(processed_pillars[3].get('tenGod'))
+life_death_analysis.py:563:        y_branch_god = processed_pillars[0].get('hidden', [{}])[0].get('god', '')
+life_death_analysis.py:564:        h_branch_god = processed_pillars[3].get('hidden', [{}])[0].get('god', '')
+life_death_analysis.py:592:    if len(processed_pillars) >= 4:
+life_death_analysis.py:593:        m_zhi = processed_pillars[1].get('zhi')
+life_death_analysis.py:620:    if len(processed_pillars) >= 4:
+life_death_analysis.py:638:        check_pillars = [
+life_death_analysis.py:645:        for item in check_pillars:
+life_death_analysis.py:646:            p = processed_pillars[item['idx']]
+life_death_analysis.py:714:    base_pillars = data.get('pillars', [])
+life_death_analysis.py:715:    if len(base_pillars) != 4: return []
+life_death_analysis.py:738:            # Construct 6 pillars
+life_death_analysis.py:739:            test_pillars = base_pillars + [dy_pillar, ln_pillar]
+life_death_analysis.py:742:            sybl = check_sui_yun_bing_lin(test_pillars)
+life_death_analysis.py:753:            fyfy = check_fan_yin_fu_yin(test_pillars)
+life_death_analysis.py:764:            tco = check_three_clash_one(test_pillars)
+life_death_analysis.py:775:            egmo = check_owl_devours_eating_god_logic(test_pillars)
+life_death_analysis.py:792:            yrc = check_yang_ren_chong(test_pillars)
+life_death_analysis.py:806:            y_ny_str = base_pillars[0].get('naYin', '')
+life_death_analysis.py:807:            m_ny_str = base_pillars[1].get('naYin', '')
+life_death_analysis.py:827:            # Needs base pillars to determine Day Branch and Day Master
+life_death_analysis.py:828:            if len(base_pillars) >= 3:
+life_death_analysis.py:829:                dm_gan_b = base_pillars[2]['gan']
+life_death_analysis.py:830:                day_zhi_b = base_pillars[2]['zhi']
+life_death_analysis.py:867:                d_shen_sha_dyn = base_pillars[2].get('shen_sha', [])
+life_death_analysis.py:890:def check_fan_yin_fu_yin(processed_pillars):
+life_death_analysis.py:897:    if len(processed_pillars) < 6: return []
+life_death_analysis.py:908:    day = processed_pillars[2]
+life_death_analysis.py:909:    dy = processed_pillars[4]
+life_death_analysis.py:910:    ln = processed_pillars[5]
+life_death_analysis.py:966:def check_three_clash_one(processed_pillars):
+life_death_analysis.py:971:    if len(processed_pillars) < 6: return []
+life_death_analysis.py:983:    dy = processed_pillars[4]
+life_death_analysis.py:984:    ln = processed_pillars[5]
+life_death_analysis.py:994:    original_branches = [p['zhi'] for p in processed_pillars[:4]]
+life_death_analysis.py:1022:def check_sui_yun_bing_lin(processed_pillars):
+life_death_analysis.py:1027:    if len(processed_pillars) < 6: return []
+life_death_analysis.py:1029:    dy = processed_pillars[4]
+life_death_analysis.py:1030:    ln = processed_pillars[5]
+life_death_analysis.py:1041:def check_yang_ren_chong(processed_pillars):
+life_death_analysis.py:1049:    if len(processed_pillars) < 6: return []
+life_death_analysis.py:1051:    dm_gan = processed_pillars[2]['gan']
+life_death_analysis.py:1060:    org_branches = [p['zhi'] for p in processed_pillars[:4]]
+life_death_analysis.py:1076:        b_ext = processed_pillars[ext_idx]['zhi']
+life_death_analysis.py:1078:            b_org = processed_pillars[org_idx]['zhi']
+life_death_analysis.py:1125:            "dy_name": processed_pillars[4]['ganZhi']
+life_death_analysis.py:1137:            qi_sha_stems = [p['gan'] for p in processed_pillars if 'ÊùÄ' in p.get('tenGod', '')]
+life_death_analysis.py:1151:                    for p in processed_pillars:
+life_death_analysis.py:1165:                    "dy_name": processed_pillars[4]['ganZhi']
+life_death_analysis.py:1173:                    "dy_name": processed_pillars[4]['ganZhi']
+life_death_analysis.py:1186:def check_owl_devours_eating_god_logic(processed_pillars):
+life_death_analysis.py:1206:    stems_ten_gods = [p['tenGod'] for p in processed_pillars]
+life_death_analysis.py:1210:    # But simpler: processed_pillars doesn't strictly label Main Qi. 
+life_death_analysis.py:1224:    for idx, p in enumerate(processed_pillars):
+life_death_analysis.py:1255:                "dy_name": processed_pillars[4]['ganZhi']
+life_death_analysis.py:1264:    def is_stem_rooted(idx, pillars):
+life_death_analysis.py:1265:        if idx >= len(pillars): return False
+life_death_analysis.py:1266:        stem_val = pillars[idx]['gan']
+life_death_analysis.py:1269:        for p in pillars:
+life_death_analysis.py:1279:    eating_rooted = any(is_stem_rooted(i, processed_pillars) for i in eating_indices)
+life_death_analysis.py:1280:    owl_rooted = any(is_stem_rooted(i, processed_pillars) for i in owl_indices)
+life_death_analysis.py:1297:            cai_rooted = any(is_stem_rooted(i, processed_pillars) for i in cai_indices)
+life_death_analysis.py:1307:    for idx, p in enumerate(processed_pillars):
+life_death_analysis.py:1319:    branches = [p['zhi'] for p in processed_pillars]
+life_death_analysis.py:1333:    dm_stem = processed_pillars[2]['gan']
+life_death_analysis.py:1388:            "dy_name": processed_pillars[4]['ganZhi']
+life_death_analysis.py:1411:            "dy_name": processed_pillars[4]['ganZhi']
+mac\bazi_logic.py:513:def get_interactions(pillars):
+mac\bazi_logic.py:514:    stems = [p['gan'] for p in pillars]
+mac\bazi_logic.py:515:    branches = [p['zhi'] for p in pillars]
+mac\bazi_logic.py:663:    processed_pillars = []
+mac\bazi_logic.py:681:        processed_pillars.append({
+mac\bazi_logic.py:790:    interactions = get_interactions(processed_pillars)
+mac\bazi_logic.py:793:        'pillars': processed_pillars,
+mac\chart_view.py:87:        # Clear previous mid/bot layouts (Top is cleared in render_main_pillars)
+mac\chart_view.py:111:        self.render_main_pillars(current_dy, current_ln)
+mac\chart_view.py:152:    def render_main_pillars(self, dy_obj, ln_obj):
+mac\chart_view.py:159:        cols_data = self.current_data['pillars'] + [col_dy, col_ln]
+mac\chart_view.py:442:        # Refresh the main chart pillars with the selected Luck context
+mac\chart_view.py:443:        self.render_main_pillars(da_yun_data, liu_nian_data)
+test_dynamic_logic.py:15:pillars = [
+test_dynamic_logic.py:25:res = get_dynamic_interactions(pillars, [4, 5])
+test_new_secrets_isolated.py:8:    pillars = [
+test_new_secrets_isolated.py:18:    risks = analyze_risks(pillars)
+test_new_secrets_isolated.py:35:    base_pillars = [
+test_new_secrets_isolated.py:52:        'pillars': base_pillars,
+verify_life_death.py:84:    pillars_with_dayun = base_chart_non_adj + [da_yun]
+verify_life_death.py:86:    check(pillars_with_dayun, "Da Yun Stem Non-Adjacent (Bing-Ren)", expect=True)
+verify_life_death.py:106:    pillars_full = base_chart_3 + [da_yun, liu_nian]
+verify_life_death.py:108:    check(pillars_full, "Liu Nian Branch Interaction (Si-Hai Clash)", expect=True)
+verify_life_death.py:116:    pillars_sybl = base_chart_3 + [dy_sybl, ln_sybl]
+verify_life_death.py:117:    check(pillars_sybl, "Sui Yun Bing Lin", expect=True)
+verify_life_death.py:161:def check(pillars, name, expect=True):
+verify_life_death.py:162:    res = life_death_analysis.check_eating_god_meets_owl(pillars)
+verify_logic.py:11:    print(f"Pillars: {[p['gan']+p['zhi'] for p in data['pillars']]}")
+verify_logic.py:12:    print(f"Day Master: {data['pillars'][2]['gan']}")
+verify_relations.py:14:    # Helper to create dummy pillars
+verify_relations.py:15:    def make_pillars(zhis):
+verify_relations.py:54:        pillars = make_pillars(zhis)
+verify_relations.py:55:        result = get_interactions(pillars)
+verify_relations.py:72:    pillars = make_pillars(['‰∏?, 'Êú?, 'Êà?])
+verify_relations.py:73:    res = get_interactions(pillars)['branches']
+verify_relations.py:81:    pillars_scrambled = make_pillars(['Êà?, '‰∏?, 'Êú?])
+verify_relations.py:82:    res_scrambled = get_interactions(pillars_scrambled)['branches']
+verify_relations.py:90:    pillars_yss = make_pillars(['ÂØ?, 'Â∑?, 'Áî?])
+verify_relations.py:91:    res_yss = get_interactions(pillars_yss)['branches']
+verify_relations.py:98:    pillars_yss_scrambled = make_pillars(['Áî?, 'ÂØ?, 'Â∑?])
+verify_relations.py:99:    res_yss_scrambled = get_interactions(pillars_yss_scrambled)['branches']
+verify_san_hui.py:5:    # Construct pillars: Year(Áî?, Month(ÈÖ?, Day(Â≠?, Hour(‰∏?
+verify_san_hui.py:7:    pillars = [
+verify_san_hui.py:19:    result = get_dynamic_interactions(pillars, dynamic_indices)
+verify_san_hui.py:21:    print("Combined Branches:", [p['zhi'] for p in pillars])

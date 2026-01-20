@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt, Signal, QTimer, QAbstractTableModel, QModelIndex
 from PySide6.QtGui import QColor, QPalette, QPainter, QPen, QTextDocument, QFont
 from bazi_logic import get_ten_god, get_shen_sha, get_kong_wang, get_color, calculate_bazi, get_dynamic_interactions
 import datetime
+from lunar_python import Solar
 import json
 import os
 
@@ -48,9 +49,30 @@ class LiuNianDelegate(QStyledItemDelegate):
         rect = option.rect
         
         is_current = False
+        is_current = False
         if data:
-            now_year = datetime.datetime.now().year
-            is_current = (data['year'] == now_year)
+            now = datetime.datetime.now()
+            # Robust Li Chun Logic
+            gregorian_year = now.year
+            bazi_year = gregorian_year
+            try:
+                s = Solar.fromYmd(gregorian_year, 2, 4)
+                l = s.getLunar()
+                jq = l.getJieQiTable()
+                if '立春' in jq:
+                    lc = jq['立春']
+                    lc_dt = datetime.datetime(lc.getYear(), lc.getMonth(), lc.getDay(), 
+                                              lc.getHour(), lc.getMinute(), lc.getSecond())
+                    if now < lc_dt:
+                        bazi_year -= 1
+                else:
+                    if now.month < 2 or (now.month == 2 and now.day < 4):
+                        bazi_year -= 1
+            except:
+                 if now.month < 2 or (now.month == 2 and now.day < 4):
+                    bazi_year -= 1
+
+            is_current = (data['year'] == bazi_year)
             
         # 1. Background
         bg = self.active_bg if is_current else self.normal_bg
@@ -111,6 +133,10 @@ class LiuNianDelegate(QStyledItemDelegate):
 
 
 class ChartPage(QWidget):
+    # Signal emitted when active luck/year changes
+    # Args: da_yun_dict, liu_nian_dict
+    activePillarsChanged = Signal(dict, dict)
+
     def __init__(self, on_back_cb):
         super().__init__()
         self.on_back_cb = on_back_cb
@@ -144,7 +170,22 @@ class ChartPage(QWidget):
                 except:
                     pass
 
-            data_list.append(record)
+            # Check for existing record with same name
+            existing_idx = -1
+            for i, item in enumerate(data_list):
+                if item.get('name') == name:
+                    existing_idx = i
+                    break
+            
+            if existing_idx != -1:
+                confirm = QMessageBox.question(self, "覆盖确认", f"已存在名为“{name}”的存档。\n是否覆盖？", QMessageBox.Yes | QMessageBox.No)
+                if confirm != QMessageBox.Yes:
+                    return
+                # Update existing
+                data_list[existing_idx] = record
+            else:
+                # Add new
+                data_list.append(record)
 
             try:
                 with open(file_path, "w", encoding="utf-8") as f:
@@ -218,6 +259,32 @@ class ChartPage(QWidget):
         if self.on_back_cb:
             self.on_back_cb()
 
+    def get_current_bazi_year(self):
+        """
+        Robustly determine current Bazi year using Li Chun.
+        """
+        import datetime
+        now = datetime.datetime.now()
+        gregorian_year = now.year
+        bazi_year = gregorian_year
+        try:
+            s = Solar.fromYmd(gregorian_year, 2, 4)
+            l = s.getLunar()
+            jq = l.getJieQiTable()
+            if '立春' in jq:
+                lc = jq['立春']
+                lc_dt = datetime.datetime(lc.getYear(), lc.getMonth(), lc.getDay(), 
+                                          lc.getHour(), lc.getMinute(), lc.getSecond())
+                if now < lc_dt:
+                    bazi_year -= 1
+            else:
+                 if now.month < 2 or (now.month == 2 and now.day < 4):
+                    bazi_year -= 1
+        except:
+             if now.month < 2 or (now.month == 2 and now.day < 4):
+                bazi_year -= 1
+        return bazi_year
+
     def render_data(self, data):
         # Store for refreshes
         self.current_data = data
@@ -242,12 +309,14 @@ class ChartPage(QWidget):
              active_idx = self.find_active_dayun(da_yun_list, current_age)
              current_dy = da_yun_list[active_idx] if active_idx != -1 else None
         
-        now_year = datetime.datetime.now().year
+        # Robust Li Chun Logic for Current Liu Nian Selection
+        bazi_year = self.get_current_bazi_year()
+                
         current_ln = None
         if current_dy:
-             current_ln = next((ln for ln in current_dy['liuNian'] if ln['year'] == now_year), None)
+             current_ln = next((ln for ln in current_dy['liuNian'] if ln['year'] == bazi_year), None)
         if not current_ln:
-             current_ln = self.get_fallback_liunian(now_year)
+             current_ln = self.get_fallback_liunian(bazi_year)
              
         # Render Pillars (Top)
         self.render_main_pillars(current_dy, current_ln)
@@ -665,7 +734,7 @@ class ChartPage(QWidget):
         self.ln_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.ln_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
-        now_year = datetime.datetime.now().year
+        now_year = self.get_current_bazi_year()
         found_idx = None
         for c in range(self.ln_model.columnCount()):
             for r in range(self.ln_model.rowCount()):
@@ -690,6 +759,9 @@ class ChartPage(QWidget):
         print(f"Clicked Year: {liu_nian_data['year']} {liu_nian_data['ganZhi']}")
         # Refresh the main chart pillars with the selected Luck context
         self.render_main_pillars(da_yun_data, liu_nian_data)
+        
+        # Notify other pages (e.g., Detailed Analysis)
+        self.activePillarsChanged.emit(da_yun_data, liu_nian_data)
         
         # Update Interactions
         norm_dy = self.normalize_luck(da_yun_data)
@@ -727,7 +799,7 @@ class ChartPage(QWidget):
         import re
         match = re.search(r'\d{4}', solar_date_str)
         birth_year = int(match.group(0)) if match else 2000
-        now_year = datetime.datetime.now().year
+        now_year = self.get_current_bazi_year()
         return now_year - birth_year + 1
 
     def get_fallback_liunian(self, current_year):

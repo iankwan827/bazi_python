@@ -1,0 +1,66 @@
+595:def get_stem_interactions_map(pillars):
+599:    stems = [p['gan'] for p in pillars]
+611:    mz = pillars[1]['zhi'] if len(pillars) > 1 else None
+622:            # - Within 4 pillars (0-3): only adjacent (dist=1) interact.
+647:def get_interactions(pillars):
+648:    stems = [p['gan'] for p in pillars]
+649:    branches = [p['zhi'] for p in pillars]
+690:                    if len(pillars) > 1:
+691:                        mz = pillars[1]['zhi']
+853:    def check_double_chong(idx1, idx2, pillars, gan_chong, zhi_chong_list):
+854:        if idx1 >= len(pillars) or idx2 >= len(pillars): return False
+855:        p1 = pillars[idx1]
+856:        p2 = pillars[idx2]
+868:    # Only check if we have enough pillars (at least 4 for original bazi)
+869:    if len(pillars) >= 4:
+871:        if check_double_chong(2, 1, pillars, gan_chong_pairs, liu_chong_pairs):
+875:        if check_double_chong(0, 2, pillars, gan_chong_pairs, liu_chong_pairs):
+879:        if check_double_chong(0, 3, pillars, gan_chong_pairs, liu_chong_pairs):
+883:        if check_double_chong(1, 3, pillars, gan_chong_pairs, liu_chong_pairs):
+924:    processed_pillars = []
+943:        processed_pillars.append({
+1063:    interactions = get_interactions(processed_pillars)
+1066:        'pillars': processed_pillars,
+1075:def get_dynamic_interactions(pillars, dynamic_indices):
+1077:    Calculate interactions but ONLY return those that involve pillars at dynamic_indices.
+1078:    pillars: list of all pillars (e.g. 4 original + 1 DY + 1 LN)
+1081:    stems = [p['gan'] for p in pillars]
+1082:    branches = [p['zhi'] for p in pillars]
+1186:def get_gong_jia_relations(pillars):
+1187:    if not pillars or len(pillars) < 4:
+1191:    # indices in pillars list.
+1217:            p1 = pillars[i]
+1218:            p2 = pillars[j]
+1285:def calculate_body_strength(pillars):
+1287:    Calculates Strength. Supports 4 (Yuan Ju) or 6 (Dynamic) pillars.
+1291:    dm = pillars[2]['gan']
+1316:    stem_mods = get_stem_interactions_map(pillars)
+1330:    if len(pillars) > 4:
+1335:        if idx >= len(pillars): continue
+1337:        gan = pillars[idx]['gan']
+1368:                zhi = pillars[idx]['zhi']
+1381:    mz = pillars[1]['zhi']
+1392:            mg = pillars[1]['gan']
+1393:            dz = pillars[2]['zhi']
+1404:    dz = pillars[2]['zhi']
+1412:        if idx >= len(pillars): continue
+1414:        z = pillars[idx]['zhi']
+1419:    if len(pillars) > 4:
+1422:        if is_same_party(ZHI_WX.get(pillars[4]['zhi'])):
+1427:        if len(pillars) > 5 and pillars[5]: 
+1429:            if is_same_party(ZHI_WX.get(pillars[5]['zhi'])):
+1448:    if len(pillars) > 5:
+1449:        dy = pillars[4]
+1450:        ln = pillars[5]
+1451:        month = pillars[1]
+1483:def calculate_global_scores(pillars):
+1488:    stem_mods = get_stem_interactions_map(pillars)
+1490:    for idx, p in enumerate(pillars):
+1516:def get_five_element_profile(pillars):
+1517:    scores = calculate_global_scores(pillars)
+1519:    dm = pillars[2]['gan']
+1561:def calculate_yong_xi_ji(pillars, bs_result):
+1562:    scores = calculate_global_scores(pillars)
+1596:    mz = pillars[1]['zhi']
+1625:    dm = pillars[2]['gan']
+1742:        mz = pillars[1]['zhi']

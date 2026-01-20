@@ -1,0 +1,20 @@
+所在位置 行:1 字符: 12
+2
++ ... ect-String 'pill
+ars' | ForEach-Object 
+{ .LineNumber.ToString
+() + ':'  ...
++                     
+                      
+                      
+ ~
+“(”后面应为表达式。
+    + CategoryInfo    
+          : ParserEr  
+  ror: (:) [], Pare   
+ ntContainsErrorRe    
+cordException
+    + FullyQualifiedE 
+   rrorId : Expected  
+  Expression
+ 
