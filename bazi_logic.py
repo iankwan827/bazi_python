@@ -1616,55 +1616,81 @@ def get_tomb_warehouse_status(pillars, scores):
 def get_all_earth_statuses(pillars, scores):
     """
     Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
-    New Logic (User Confirmation):
-    - Warehouse if: (Stem Revealed) OR (Has Root in Branches).
-    - Tomb if: Neither.
-    - Score percentage is NOT used for this qualitative identity.
+    Logic (User Refined - Unreduced Score):
+    - Calculate 'Unreduced Score' (不计月令/克泄耗) for the Target Element.
+    - Weights:
+      - Stem (Target/Producing): 15 (Ensures Stem > Single Tomb)
+      - Branch Main Qi (Target): 30 (Strong Root)
+      - Branch Hidden Qi (Target): 8 (Weak/Residual)
+    - Threshold: 12
+      - Single Tomb (8) < 12 -> Tomb.
+      - Tomb + Stem (23) -> Warehouse.
+      - Tomb + Main Root (38) -> Warehouse.
+      - Two Tombs (16) -> Warehouse (Accumulation).
     """
     TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
     PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
     
-    # Define Main Qi Roots (Branches whose ZHI_WX matches target)
-    # Water Roots: Zi, Hai
-    # Fire Roots: Si, Wu
-    # Metal Roots: Shen, You
-    # Wood Roots: Yin, Mao
+    stems = [p.get('gan') for p in pillars if p and p.get('gan')]
     
-    # 1. Check Revealed Stems
-    stems_wx = []
-    for p in pillars:
-        if p and p.get('gan'):
-            stems_wx.append(GAN_WX.get(p['gan']))
-
-    # 2. Check Branch Roots (Main Qi)
-    branches_wx = []
-    for p in pillars:
-        if p and p.get('zhi'):
-            branches_wx.append(ZHI_WX.get(p['zhi']))
-
+    # We need full branch objects to lookup hidden stems
+    branches = [p.get('zhi') for p in pillars if p and p.get('zhi')]
+    
+    # Pre-calculate simple lists
+    stems_wx = [GAN_WX.get(s) for s in stems]
+    
     results = {}
     
     for zhi in ['辰', '戌', '丑', '未']:
         target_wx = TARGET_MAP.get(zhi)
         producing_wx = PRODUCING_MAP.get(target_wx)
         
-        # Condition A: Stem Revealed (Target OR Producing)
-        is_stem_revealed = False
-        if producing_wx:
-            for wx in stems_wx:
-                if wx == target_wx or wx == producing_wx:
-                    is_stem_revealed = True
-                    break
-                    
-        # Condition B: Has Root (Main Qi in ANY branch matches Target)
-        # Note: We do NOT count the Tomb itself as a 'Root' here because ZHI_WX['辰'] is Earth.
-        # This correctly checks for *other* strong roots like Zi/Hai.
-        has_root = False
-        if target_wx in branches_wx:
-            has_root = True
+        unreduced_score = 0
+        
+        # 1. Stem Score (+15)
+        # Any stem matching Target or Producing contributes.
+        # (Counting each occurrence? Yes, accumulation matters).
+        for wx in stems_wx:
+            if wx == target_wx or wx == producing_wx:
+                unreduced_score += 15
+        
+        # 2. Branch Score
+        for b_zhi in branches:
+            # Main Qi
+            main_wx = ZHI_WX.get(b_zhi)
+            if main_wx == target_wx:
+                unreduced_score += 30
             
-        # Logic: Warehouse if Root OR Revealed
-        if is_stem_revealed or has_root:
+            # Hidden Stems
+            hidden_stems = HIDDEN_STEMS_MAP.get(b_zhi, [])
+            # Check if Target is in Hidden Stems
+            # Note: We convert Hidden Stem to WX.
+            # Usually Hidden Stems are stored as Stems (Gan).
+            # e.g. '辰' -> ['戊', '乙', '癸'].
+            # '癸' is Water (Target for Chen).
+            
+            # Optimization: If Main Qi matches, we usually don't double count hidden main qi?
+            # But ZHI_WX gives Main Qi.
+            # e.g. Zi: Main=Water. Hidden=Gui(Water).
+            # If we add both, Zi becomes 30+8=38. Strong.
+            # Chen: Main=Earth. Hidden=Gui(Water). Only +8.
+            # This works perfectly.
+            
+            for h_stem in hidden_stems:
+                h_wx = GAN_WX.get(h_stem)
+                if h_wx == target_wx:
+                    unreduced_score += 8
+                    # Decide if we count multiple hidden stems of same element?
+                    # Usually only one per branch for these elements.
+                    # e.g. Chen has Gui.
+                    # Chou has Gui.
+                    # Xu has Ding.
+                    # Wei has Yi.
+                    break 
+
+        # Status
+        # Threshold 12: Surpasses single Tomb (8).
+        if unreduced_score > 12:
              status_type = 'Warehouse'
              desc = '库'
         else:

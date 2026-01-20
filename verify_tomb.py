@@ -26,53 +26,42 @@ def test_tomb_warehouse():
     assert res1['辰']['type'] == 'Warehouse', "Expected Warehouse for Chen"
     
     print(f"Result for Xu: {res1.get('戌')}")
-    # Xu (Fire). Roots: Si, Wu. Pillars: [Zi, Yin, Wu, Zi].
-    # Wu (Day Branch) is Fire. Has Root!
-    # Stems: Ren, Jia, Bing, Wu. Bing (Fire) is Revealed.
-    # Root + Revealed -> Warehouse.
-    # Previous check failed because Score < 20% (Low Fire).
-    # New Check: Has Root (Wu) OR Revealed (Bing) -> Warehouse.
-    assert res1['戌']['type'] == 'Warehouse', "Expected Warehouse for Xu (Has Root 'Wu' + Revealed 'Bing')"
+    # Xu (Fire). Roots: Wu (+30). Revealed Bing (+15). Hidden Ding in Xu (+8).
+    # Total Unreduced > 12.
+    assert res1['戌']['type'] == 'Warehouse', "Expected Warehouse for Xu (Strong)"
 
-    # Case 2: Only Stem Revealed (No Root) -> Previous Floating Case
+    # Case 2: Only Stem Revealed (No Root)
     print("\nCase 2: Stem Revealed but No Root")
-    # Pillars: [Jia Chen, ..., ..., ...]
-    # Suppose Chen(Water). No Zi/Hai. But Stem Ren(Water) exists.
-    # Pillars: Ren Chen, Jia Yin, Jia Yin, Jia Yin.
+    # Pillars: Ren Chen (Stem +15, Hidden +8 = 23).
     pillars2 = [
         {'gan': '壬', 'zhi': '辰'}, 
         {'gan': '甲', 'zhi': '寅'},
         {'gan': '甲', 'zhi': '寅'},
         {'gan': '甲', 'zhi': '寅'}
     ]
-    scores2 = {} # Ignored
-    res2 = get_all_earth_statuses(pillars2, scores2)
-    # Chen (Water). Root: None (Yin/Chen are Wood/Earth).
-    # Stem: Ren (Water). Revealed.
-    # Logic: Revealed OR Root -> Warehouse.
+    res2 = get_all_earth_statuses(pillars2, {})
+    # Score: Stem Ren(15) + Hidden Gui in Chen(8) = 23. > 12.
     print(f"Result for Chen: {res2.get('辰')}")
     assert res2['辰']['type'] == 'Warehouse', "Expected Warehouse for Chen (Stem Revealed)"
 
     # Case 3: Only Root (No Stem)
     print("\nCase 3: Root Exists but No Stem")
-    # Pillars: Jia Zi, ..., ..., ...
-    # Chen(Water). Root: Zi (Water). Stem: Jia (Wood). Not Revealed.
+    # Pillars: Jia Zi (Root +30) + Chen (Hidden +8).
     pillars3 = [
         {'gan': '甲', 'zhi': '子'},
-        {'gan': '甲', 'zhi': '寅'},
+        {'gan': '甲', 'zhi': '辰'},
         {'gan': '甲', 'zhi': '寅'},
         {'gan': '甲', 'zhi': '寅'}
     ]
     res3 = get_all_earth_statuses(pillars3, {})
-    # Chen(Water). Root: Zi (Yes).
-    # Logic: Root OR Revealed -> Warehouse.
+    # Score: Zi(30) + Chen_Hidden(8) = 38. > 12.
     print(f"Result for Chen: {res3.get('辰')}")
     assert res3['辰']['type'] == 'Warehouse', "Expected Warehouse for Chen (Root Exists)"
 
-    # Case 4: Pure Tomb (No Root, No Stem)
+    # Case 4: Pure Tomb (No Root, No Stem, Single Tomb)
     print("\nCase 4: Pure Tomb")
-    # Pillars: Jia Chen, ...
-    # No Water Root, No Water Stem.
+    # Pillars: Jia Chen. 
+    # Score: Hidden Gui in Chen(8). < 12.
     pillars4 = [
         {'gan': '甲', 'zhi': '辰'},
         {'gan': '甲', 'zhi': '寅'},
@@ -81,7 +70,21 @@ def test_tomb_warehouse():
     ]
     res4 = get_all_earth_statuses(pillars4, {})
     print(f"Result for Chen: {res4.get('辰')}")
-    assert res4['辰']['type'] == 'Tomb', "Expected Tomb for Chen (No Root, No Stem)"
+    assert res4['辰']['type'] == 'Tomb', "Expected Tomb for Chen (Single Tomb < Threshold)"
+
+    # Case 5: Two Tombs (Accumulation)
+    print("\nCase 5: Two Tombs")
+    # Pillars: Jia Chen, Jia Chen.
+    # Score: Hidden(8) + Hidden(8) = 16. > 12.
+    pillars5 = [
+        {'gan': '甲', 'zhi': '辰'},
+        {'gan': '甲', 'zhi': '辰'},
+        {'gan': '甲', 'zhi': '寅'},
+        {'gan': '甲', 'zhi': '寅'}
+    ]
+    res5 = get_all_earth_statuses(pillars5, {})
+    print(f"Result for Chen: {res5.get('辰')}")
+    assert res5['辰']['type'] == 'Warehouse', "Expected Warehouse for 2x Chen (Accumulation > Threshold)"
 
     print("\nAll Tests Passed!")
 
