@@ -1615,44 +1615,62 @@ def get_tomb_warehouse_status(pillars, scores):
 
 def get_all_earth_statuses(pillars, scores):
     """
-    Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei),
-    regardless of whether they appear in the pillars.
+    Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
+    New Logic (User Confirmation):
+    - Warehouse if: (Stem Revealed) OR (Has Root in Branches).
+    - Tomb if: Neither.
+    - Score percentage is NOT used for this qualitative identity.
     """
     TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
     PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
     
+    # Define Main Qi Roots (Branches whose ZHI_WX matches target)
+    # Water Roots: Zi, Hai
+    # Fire Roots: Si, Wu
+    # Metal Roots: Shen, You
+    # Wood Roots: Yin, Mao
+    
+    # 1. Check Revealed Stems
     stems_wx = []
     for p in pillars:
         if p and p.get('gan'):
             stems_wx.append(GAN_WX.get(p['gan']))
-            
-    total_score = sum(scores.values())
-    if total_score == 0: total_score = 1
-    
+
+    # 2. Check Branch Roots (Main Qi)
+    branches_wx = []
+    for p in pillars:
+        if p and p.get('zhi'):
+            branches_wx.append(ZHI_WX.get(p['zhi']))
+
     results = {}
     
-    # Iterate over all 4 Earth branches
     for zhi in ['辰', '戌', '丑', '未']:
         target_wx = TARGET_MAP.get(zhi)
-        
-        # Condition A: Score > 20%
-        target_score = scores.get(target_wx, 0)
-        ratio = target_score / total_score
-        cond_a = ratio > 0.20
-        
-        # Condition B: Stem Revealed
         producing_wx = PRODUCING_MAP.get(target_wx)
-        cond_b = False
+        
+        # Condition A: Stem Revealed (Target OR Producing)
+        is_stem_revealed = False
         if producing_wx:
             for wx in stems_wx:
                 if wx == target_wx or wx == producing_wx:
-                    cond_b = True
+                    is_stem_revealed = True
                     break
+                    
+        # Condition B: Has Root (Main Qi in ANY branch matches Target)
+        # Note: We do NOT count the Tomb itself as a 'Root' here because ZHI_WX['辰'] is Earth.
+        # This correctly checks for *other* strong roots like Zi/Hai.
+        has_root = False
+        if target_wx in branches_wx:
+            has_root = True
+            
+        # Logic: Warehouse if Root OR Revealed
+        if is_stem_revealed or has_root:
+             status_type = 'Warehouse'
+             desc = '库'
+        else:
+             status_type = 'Tomb'
+             desc = '墓'
         
-        status_type = 'Warehouse' if (cond_a and cond_b) else 'Tomb'
-        desc = '库' if status_type == 'Warehouse' else '墓'
-        
-        # Special Label handling for Xu (Fire+Earth) if needed, but logic uses Fire
         results[zhi] = {'type': status_type, 'desc': desc}
         
     return results
