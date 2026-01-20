@@ -1468,7 +1468,11 @@ def calculate_body_strength(pillars):
 
     # Branches
     
+    # Branches
+    is_guan_yin = False
+    
     def apply_branch_score(idx, base_weight, is_month=False):
+        nonlocal is_guan_yin
         if idx >= len(pillars): return 0
         p = pillars[idx]
         if not p: return 0
@@ -1595,13 +1599,12 @@ def calculate_body_strength(pillars):
             alerts.append("【预警】流年与月令战克：环境震荡，根基不稳。")
 
     return {
-        'score': total_score,
-        'maxScore': max_possible_score,
-        'percentage': round((total_score / max_possible_score) * 100, 1) if max_possible_score > 0 else 0,
+        'total_score': total_score,
+        'max_possible_score': max_possible_score,
         'level': level,
         'logs': logs,
         'alerts': alerts,
-        'isGuanYin': is_guan_yin
+        'is_guan_yin': is_guan_yin
     }
 
 def calculate_global_scores(pillars):
