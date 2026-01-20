@@ -1616,89 +1616,68 @@ def get_tomb_warehouse_status(pillars, scores):
 def get_all_earth_statuses(pillars, scores):
     """
     Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
-    Logic (User Refined - Unreduced Score):
-    - Calculate 'Unreduced Score' (不计月令/克泄耗) for the Target Element.
-    - Weights:
-      - Stem (Target/Producing): 15 (Ensures Stem > Single Tomb)
-      - Branch Main Qi (Target): 30 (Strong Root)
-      - Branch Hidden Qi (Target): 8 (Weak/Residual)
-    - Threshold: 12
-      - Single Tomb (8) < 12 -> Tomb.
-      - Tomb + Stem (23) -> Warehouse.
-      - Tomb + Main Root (38) -> Warehouse.
-      - Two Tombs (16) -> Warehouse (Accumulation).
+    Logic (User Refined - Priority Filtering):
+    - Priority 1 (Identity Anchor): If Branch has Main Qi Root (e.g. Zi/Hai for Water), Locked as Warehouse.
+    - Priority 2 (Image Anchor): If Stem Revealed (Target/Producing), Locked as Warehouse.
+    - Priority 3 (Score threshold): Only if neither above, check Residual/Hidden accumulation > 12.
     """
     TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
     PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
     
+    # 1. Prepare Data
     stems = [p.get('gan') for p in pillars if p and p.get('gan')]
-    
-    # We need full branch objects to lookup hidden stems
     branches = [p.get('zhi') for p in pillars if p and p.get('zhi')]
-    
-    # Pre-calculate simple lists
     stems_wx = [GAN_WX.get(s) for s in stems]
-    
+
     results = {}
     
     for zhi in ['辰', '戌', '丑', '未']:
         target_wx = TARGET_MAP.get(zhi)
         producing_wx = PRODUCING_MAP.get(target_wx)
         
-        unreduced_score = 0
+        status_type = 'Tomb' # Default
+        desc = '墓'
         
-        # 1. Stem Score (+15)
-        # Any stem matching Target or Producing contributes.
-        # (Counting each occurrence? Yes, accumulation matters).
+        # Priority 1: Identity Anchor (Main Qi Root)
+        # Check if any branch's Main Qi matches Target
+        has_root = False
+        for b_zhi in branches:
+            if ZHI_WX.get(b_zhi) == target_wx:
+                has_root = True
+                break
+        
+        if has_root:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
+            continue # Locked
+            
+        # Priority 2: Image Anchor (Stem Revealed)
+        is_revealed = False
         for wx in stems_wx:
             if wx == target_wx or wx == producing_wx:
-                unreduced_score += 15
+                is_revealed = True
+                break
         
-        # 2. Branch Score
+        if is_revealed:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
+            continue # Locked
+            
+        # Priority 3: Residual Score Threshold
+        # Only reached if No Root and No Stem.
+        # Check accumulation of Hidden Stems.
+        residual_score = 0
         for b_zhi in branches:
-            # Main Qi
-            main_wx = ZHI_WX.get(b_zhi)
-            if main_wx == target_wx:
-                unreduced_score += 30
-            
-            # Hidden Stems
             hidden_stems = HIDDEN_STEMS_MAP.get(b_zhi, [])
-            # Check if Target is in Hidden Stems
-            # Note: We convert Hidden Stem to WX.
-            # Usually Hidden Stems are stored as Stems (Gan).
-            # e.g. '辰' -> ['戊', '乙', '癸'].
-            # '癸' is Water (Target for Chen).
-            
-            # Optimization: If Main Qi matches, we usually don't double count hidden main qi?
-            # But ZHI_WX gives Main Qi.
-            # e.g. Zi: Main=Water. Hidden=Gui(Water).
-            # If we add both, Zi becomes 30+8=38. Strong.
-            # Chen: Main=Earth. Hidden=Gui(Water). Only +8.
-            # This works perfectly.
-            
             for h_stem in hidden_stems:
-                h_wx = GAN_WX.get(h_stem)
-                if h_wx == target_wx:
-                    unreduced_score += 8
-                    # Decide if we count multiple hidden stems of same element?
-                    # Usually only one per branch for these elements.
-                    # e.g. Chen has Gui.
-                    # Chou has Gui.
-                    # Xu has Ding.
-                    # Wei has Yi.
-                    break 
-
-        # Status
-        # Threshold 12: Surpasses single Tomb (8).
-        if unreduced_score > 12:
-             status_type = 'Warehouse'
-             desc = '库'
+                if GAN_WX.get(h_stem) == target_wx:
+                    residual_score += 8 # Hidden Qi weight
+                    break
+        
+        # Threshold > 12 (e.g. 2 Tombs = 16 > 12)
+        if residual_score > 12:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
         else:
-             status_type = 'Tomb'
-             desc = '墓'
-        
-        results[zhi] = {'type': status_type, 'desc': desc}
-        
+            results[zhi] = {'type': 'Tomb', 'desc': '墓'}
+
     return results
 
 def calculate_yong_xi_ji(pillars, bs_result):
