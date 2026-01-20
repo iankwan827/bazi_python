@@ -1282,10 +1282,93 @@ def get_gong_jia_relations(pillars):
     
     return res
 
+def get_void_branches(day_gan, day_zhi):
+    gan_idx = GAN.index(day_gan)
+    zhi_idx = ZHI.index(day_zhi)
+    xun_offset = (zhi_idx - gan_idx) % 12
+    if xun_offset == 0: return ['戌', '亥'] # Jia Zi
+    if xun_offset == 10: return ['子', '丑'] # Jia Yin
+    if xun_offset == 8: return ['寅', '卯'] # Jia Chen
+    if xun_offset == 6: return ['辰', '巳'] # Jia Wu
+    if xun_offset == 4: return ['午', '未'] # Jia Shen
+    if xun_offset == 2: return ['申', '酉'] # Jia Xu
+    return []
+
+def check_is_clashed(target_zhi, all_zhis):
+    # Standard Clash Map
+    clash_map = {
+        '子': '午', '午': '子',
+        '丑': '未', '未': '丑',
+        '寅': '申', '申': '寅',
+        '卯': '酉', '酉': '卯',
+        '辰': '戌', '戌': '辰',
+        '巳': '亥', '亥': '巳'
+    }
+    opponent = clash_map.get(target_zhi)
+    return opponent in all_zhis
+
+def get_all_earth_statuses(pillars, scores):
+    """
+    Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
+    Logic (Phase 1: Priority Filtering Identity):
+    - Priority 1: Roots -> Warehouse.
+    - Priority 2: Stems -> Warehouse.
+    - Priority 3: Residual Score > 12 -> Warehouse.
+    """
+    TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
+    PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
+    
+    stems = [p.get('gan') for p in pillars if p and p.get('gan')]
+    branches = [p.get('zhi') for p in pillars if p and p.get('zhi')]
+    stems_wx = [GAN_WX.get(s) for s in stems]
+
+    results = {}
+    
+    for zhi in ['辰', '戌', '丑', '未']:
+        target_wx = TARGET_MAP.get(zhi)
+        producing_wx = PRODUCING_MAP.get(target_wx)
+        status_type = 'Tomb' # Default
+        desc = '墓'
+        
+        # P1: Root
+        has_root = False
+        for b_zhi in branches:
+            if ZHI_WX.get(b_zhi) == target_wx:
+                has_root = True
+                break
+        if has_root:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
+            continue
+
+        # P2: Stem
+        is_revealed = False
+        for wx in stems_wx:
+            if wx == target_wx or wx == producing_wx:
+                is_revealed = True
+                break
+        if is_revealed:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
+            continue
+
+        # P3: Residual
+        residual = 0
+        for b_zhi in branches:
+            for h in HIDDEN_STEMS_MAP.get(b_zhi, []):
+                if GAN_WX.get(h) == target_wx:
+                    residual += 8
+                    break
+        if residual > 12:
+            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
+        else:
+            results[zhi] = {'type': 'Tomb', 'desc': '墓'}
+            
+    return results
+
 def calculate_body_strength(pillars):
     """
     Calculates Strength. Supports 4 (Yuan Ju) or 6 (Dynamic) pillars.
     Updated for Advanced Logic: Dynamic Thresholds, Sui Yun Bing Lin, Zhan Ke.
+    + Phase 2 Dynamic Correction for Tomb/Warehouse.
     """
     # Pillar Structure: [{'gan':.., 'zhi':..}, ...]
     dm = pillars[2]['gan']
@@ -1322,6 +1405,17 @@ def calculate_body_strength(pillars):
             logs.append(f"日主{dm}化为{dm_wx}，按新五行判定身强身弱")
     elif dm_mod and dm_mod['status'] == 'he_ban':
         logs.append(f"日主{dm}被合绊，自身能量受限")
+        
+    # --- Prepare Phase 2 Data for Earth Branches ---
+    # 1. Get Identity Map
+    # We pass empty scores dict as P1 Logic doesn't use passed scores anymore.
+    earth_statuses = get_all_earth_statuses(pillars, {}) 
+    
+    # 2. Get Collision/Void Info
+    all_zhis = [p['zhi'] for p in pillars if p]
+    day_gan = pillars[2]['gan']
+    day_zhi = pillars[2]['zhi']
+    void_branches = get_void_branches(day_gan, day_zhi)
 
     # --- 1. Calculate Scores ---
 
@@ -1352,10 +1446,6 @@ def calculate_body_strength(pillars):
                 logs.append(f"{gan}合绊：能量x0.6且锁定生克职能")
 
         if is_same_party(effective_wx):
-            # If locked, it can't "generate" (生) the DM.
-            # But if it's the same element (同), does it still count?
-            # User says can_generate/can_restrict = False.
-            # In this scoring, if it's '生' relation, we treat it as 0 if locked.
             rel = get_rel(effective_wx)
             score = weights['stem'] * multiplier
             
@@ -1377,57 +1467,91 @@ def calculate_body_strength(pillars):
                 total_score += score
 
     # Branches
-    # Month (1)
-    mz = pillars[1]['zhi']
-    mz_wx = ZHI_WX.get(mz)
-    mz_score = weights['monthZhi']
-    max_possible_score += weights['monthZhi']
-    is_guan_yin = False
-
-    if is_same_party(mz_wx):
-        total_score += mz_score
-    else:
-        # Guan Yin Check
-        if get_rel(mz_wx) == '克':
-            mg = pillars[1]['gan']
-            dz = pillars[2]['zhi']
-            mg_is_yin = (get_rel(GAN_WX.get(mg)) == '生')
-            dz_is_yin = (get_rel(ZHI_WX.get(dz)) == '生')
+    
+    def apply_branch_score(idx, base_weight, is_month=False):
+        if idx >= len(pillars): return 0
+        p = pillars[idx]
+        if not p: return 0
+        zhi = p['zhi']
+        zhi_wx = ZHI_WX.get(zhi)
+        
+        score = base_weight
+        
+        # Phase 2 Dynamic Correction (Earth Branches)
+        if zhi in ['辰', '戌', '丑', '未']:
+            identity_info = earth_statuses.get(zhi, {'type': 'Tomb'})
+            identity = identity_info['type']
             
-            if mg_is_yin or dz_is_yin:
-                is_guan_yin = True
-                converted = mz_score * 0.8
-                total_score += converted
-                logs.append(f"触发[官印相生]：月令{mz}({mz_wx})由克转生");
+            # 1. State: Clash vs Closed
+            is_clashed = check_is_clashed(zhi, all_zhis)
+            # User: "Clashed... 1.5 if Warehouse else 0.2"
+            #       "Else (Closed)... 0.5"
+            state_mult = 0.5 # Default Closed
+            if is_clashed:
+                if identity == 'Warehouse':
+                    state_mult = 1.5
+                    logs.append(f"{zhi}({identity})被冲开(Open): 能量释放 x1.5")
+                else:
+                    state_mult = 0.2
+                    logs.append(f"{zhi}({identity})被冲破(Broken): 能量损毁 x0.2")
+            else:
+                logs.append(f"{zhi}({identity})处于闭合(Closed)状态: 能量潜伏 x0.5")
+            
+            score *= state_mult
+            
+            # 2. Void Modifier
+            if zhi in void_branches:
+                score *= 0.3
+                logs.append(f"{zhi}逢空亡: 能量 x0.3")
+
+        # Guan Yin Check (Month Only)
+        # Note: If Earth Month is modified by Phase 2, we still check Guan Yin?
+        # Yes, but on the *modified* score? Or logic check.
+        # Check Guan Yin logic... it converts Clashing Month to Producing.
+        # If Earth Month is same party, we just add score.
+        # If not same party, we check Guan Yin.
+        
+        # Apply Party Check
+        if is_same_party(zhi_wx):
+            return score
+        else:
+            if is_month:
+                # Guan Yin Check
+                if get_rel(zhi_wx) == '克':
+                    mg = pillars[1]['gan']
+                    dz = pillars[2]['zhi']
+                    mg_is_yin = (get_rel(GAN_WX.get(mg)) == '生')
+                    dz_is_yin = (get_rel(ZHI_WX.get(dz)) == '生')
+                    
+                    if mg_is_yin or dz_is_yin:
+                        converted = score * 0.8
+                        logs.append(f"触发[官印相生]：月令{zhi}({zhi_wx})由克转生")
+                        return converted
+        return 0
+
+    # Month (1)
+    max_possible_score += weights['monthZhi']
+    total_score += apply_branch_score(1, weights['monthZhi'], is_month=True)
 
     # Day Zhi (2)
-    dz = pillars[2]['zhi']
     max_possible_score += weights['dayZhi']
-    if is_same_party(ZHI_WX.get(dz)):
-        total_score += weights['dayZhi']
+    total_score += apply_branch_score(2, weights['dayZhi'])
 
     # Other Zhi (Year 0, Hour 3)
-    other_indices = [0, 3]
-    for idx in other_indices:
-        if idx >= len(pillars): continue
+    for idx in [0, 3]:
         max_possible_score += weights['otherZhi']
-        z = pillars[idx]['zhi']
-        if is_same_party(ZHI_WX.get(z)):
-            total_score += weights['otherZhi']
+        total_score += apply_branch_score(idx, weights['otherZhi'])
 
     # Dynamic Zhi
     if len(pillars) > 4:
         # DY (4)
         max_possible_score += weights['dyZhi']
-        if is_same_party(ZHI_WX.get(pillars[4]['zhi'])):
-            total_score += weights['dyZhi']
+        total_score += apply_branch_score(4, weights['dyZhi'])
         
         # LN (5)
-        # Check if LN exists (might just be checking DaYun without LiuNian in some flows, handle safely)
         if len(pillars) > 5 and pillars[5]: 
             max_possible_score += weights['lnZhi']
-            if is_same_party(ZHI_WX.get(pillars[5]['zhi'])):
-                total_score += weights['lnZhi']
+            total_score += apply_branch_score(5, weights['lnZhi'])
 
     # --- 2. Determine Status ---
     neutral_min = max_possible_score * 0.48
