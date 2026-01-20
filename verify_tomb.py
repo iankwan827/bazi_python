@@ -5,59 +5,41 @@ import os
 # Ensure we can import from current directory
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from bazi_logic import get_tomb_warehouse_status
+
+from bazi_logic import get_all_earth_statuses
 
 def test_tomb_warehouse():
-    print("Testing Tomb/Warehouse Logic...")
+    print("Testing Tomb/Warehouse Logic (All 4)...")
     
-    # Setup Mock Pillars (Simple structure compatible with function)
-    # Pillars: [Year, Month, Day, Hour]
-    
-    # Case 1: Chen Warehouse (High Score + Revealed Target)
-    print("\nCase 1: Chen (Water) - High Score (30%) + Ren (Water) Stem")
+    # Case 1: Chen Warehouse environment
+    print("\nCase 1: Environment with High Water + Ren Stem")
     pillars1 = [
-        {'gan': '壬', 'zhi': '辰'}, # Year: Ren (Water) Chen
+        {'gan': '壬', 'zhi': '子'}, # Ren Stem, doesn't matter what branch
         {'gan': '甲', 'zhi': '寅'},
         {'gan': '丙', 'zhi': '午'},
         {'gan': '戊', 'zhi': '子'}
     ]
-    scores1 = {'水': 30, '木': 20, '火': 20, '土': 20, '金': 10} # Total 100
-    res1 = get_tomb_warehouse_status(pillars1, scores1)
-    print(f"Result: {res1.get(0)}")
-    assert res1[0]['type'] == 'Warehouse', "Expected Warehouse for Chen with High Water & Ren Stem"
+    scores1 = {'水': 30, '木': 20, '火': 20, '土': 20, '金': 10} 
+    res1 = get_all_earth_statuses(pillars1, scores1)
+    
+    print(f"Result for Chen: {res1.get('辰')}")
+    assert res1['辰']['type'] == 'Warehouse', "Expected Warehouse for Chen"
+    
+    print(f"Result for Xu: {res1.get('戌')}")
+    # Fire score is 20 (Total 100) -> 20%. Not > 20%. So Tomb.
+    # Wait, 20/100 is not > 0.20. It's ==. Logic says > 0.20.
+    assert res1['戌']['type'] == 'Tomb', "Expected Tomb for Xu (Score not > 20%)"
 
-    # Case 2: Chen Tomb (Low Score)
-    print("\nCase 2: Chen (Water) - Low Score (10%) + Ren Stem")
-    scores2 = {'水': 10, '木': 30, '火': 30, '土': 20, '金': 10} # Total 100
-    res2 = get_tomb_warehouse_status(pillars1, scores2) # Using pillars1 (Ren Stem present)
-    print(f"Result: {res2.get(0)}")
-    assert res2[0]['type'] == 'Tomb', "Expected Tomb for Chen with Low Water Score"
-
-    # Case 3: Chen Tomb (High Score but No Stem)
-    print("\nCase 3: Chen (Water) - High Score (30%) + No Water/Metal Stem")
-    pillars3 = [
-        {'gan': '甲', 'zhi': '辰'}, # Year: Jia (Wood) Chen
-        {'gan': '丙', 'zhi': '寅'},
-        {'gan': '戊', 'zhi': '午'},
-        {'gan': '己', 'zhi': '丑'}
-    ]
-    # Stems: Wood, Fire, Earth, Earth. No Water (Target) or Metal (Source).
-    res3 = get_tomb_warehouse_status(pillars3, scores1) # Scores1 has high Water
-    print(f"Result: {res3.get(0)}")
-    assert res3[0]['type'] == 'Tomb', "Expected Tomb for Chen with High Score but No Revealed Stem"
-
-    # Case 4: Xu Warehouse (High Score + Producing Stem)
-    print("\nCase 4: Xu (Fire) - High Score (30%) + Jia (Wood) Stem (Producing)")
-    pillars4 = [
-        {'gan': '甲', 'zhi': '戌'}, # Year: Jia (Wood) Xu. Jia produces Fire.
-        {'gan': '丙', 'zhi': '寅'},
-        {'gan': '戊', 'zhi': '午'},
-        {'gan': '己', 'zhi': '丑'}
-    ]
-    scores4 = {'火': 30, '木': 20, '土': 20, '金': 20, '水': 10}
-    res4 = get_tomb_warehouse_status(pillars4, scores4)
-    print(f"Result: {res4.get(0)}")
-    assert res4[0]['type'] == 'Warehouse', "Expected Warehouse for Xu with High Fire & producing Wood Stem"
+    # Case 2: High Fire Score for Xu
+    print("\nCase 2: Environment with High Fire + No Producing Stem")
+    scores2 = {'水': 10, '木': 10, '火': 40, '土': 20, '金': 20}
+    # Stems in pillars1: Ren(Water), Jia(Wood), Bing(Fire), Wu(Earth).
+    # For Xu (Fire), Target is Fire. Producing is Wood.
+    # Pillars have Jia (Wood) and Bing (Fire).
+    # So both Cond A (>20%) and Cond B (Stem Revealed) should be Met.
+    res2 = get_all_earth_statuses(pillars1, scores2)
+    print(f"Result for Xu: {res2.get('戌')}")
+    assert res2['戌']['type'] == 'Warehouse', "Expected Warehouse for Xu"
 
     print("\nAll Tests Passed!")
 

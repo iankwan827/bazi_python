@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QScrollArea, QFrame
 from PySide6.QtCore import Qt
 from bazi_logic import (get_gong_jia_relations, get_interactions, 
                         calculate_body_strength, calculate_yong_xi_ji, get_five_element_profile,
-                        get_tomb_warehouse_status, calculate_global_scores)
+                        get_tomb_warehouse_status, calculate_global_scores, get_all_earth_statuses)
 
 class JudgmentFormulasPage(QWidget):
     def __init__(self):
@@ -77,47 +77,36 @@ class JudgmentFormulasPage(QWidget):
         
         
 
-        # New: Tomb/Warehouse Status
-        scores = calculate_global_scores(pillars)
-        tomb_status = get_tomb_warehouse_status(pillars, scores)
 
-        b_status_html = ""
-        if tomb_status:
-            b_status_html += "<div style='margin-top:6px; font-size:13px; color:#aaa;'>地支状态: "
-            pillars_names = ["年", "月", "日", "时"]
-            found_any = False
-            
-            # Label Mapping for Display
-            # Chen -> Water, Xu -> Fire+Earth, Chou -> Metal, Wei -> Wood
-            TYPE_LABELS = {
-                '辰': '水',
-                '戌': '火土',
-                '丑': '金',
-                '未': '木'
-            }
-            
-            for idx, status in tomb_status.items():
-                if idx < len(pillars_names):
-                    p_name = pillars_names[idx]
-                    zhi_char = pillars[idx]['zhi']
-                    
-                    element_label = TYPE_LABELS.get(zhi_char, '')
-                    status_text = status['desc'] # '库' or '墓'
-                    
-                    # status['type'] is 'Warehouse' or 'Tomb'
-                    # User wants: "辰水库", "戌火土墓"
-                    # Format: zhi_char + element_label + status_text
-                    
-                    full_label = f"{zhi_char}{element_label}{status_text}"
-                    
-                    if status['type'] == 'Warehouse':
-                        b_status_html += f"<span style='color:#27ae60; margin-right:5px;'>[{p_name}:{full_label}]</span>"
-                        found_any = True
-                    else:
-                        b_status_html += f"<span style='color:#7f8c8d; margin-right:5px;'>[{p_name}:{full_label}]</span>"
-                        found_any = True
-            b_status_html += "</div>"
-            if not found_any: b_status_html = ""
+        # New: Tomb/Warehouse Status (Display All 4)
+        scores = calculate_global_scores(pillars)
+        all_earth_status = get_all_earth_statuses(pillars, scores)
+
+        b_status_html = "<div style='margin-top:6px; font-size:13px; color:#aaa;'>地支状态: "
+        
+        # Order: Chen, Xu, Chou, Wei
+        ORDER = ['辰', '戌', '丑', '未']
+        TYPE_LABELS = {
+            '辰': '水',
+            '戌': '火土',
+            '丑': '金',
+            '未': '木'
+        }
+        
+        for zhi in ORDER:
+            status = all_earth_status.get(zhi)
+            if status:
+                element_label = TYPE_LABELS.get(zhi, '')
+                status_text = status['desc']
+                full_label = f"{zhi}{element_label}{status_text}"
+                
+                # Highlight logic? Maybe bold if it is Warehouse? Or just consistent colors.
+                # User didn't specify, but let's keep the color scheme: Green for Warehouse, Grey/Normal for Tomb
+                
+                style = "color:#27ae60; font-weight:bold;" if status['type'] == 'Warehouse' else "color:#7f8c8d;"
+                b_status_html += f"<span style='{style} margin-right:8px;'>[{full_label}]</span>"
+
+        b_status_html += "</div>"
 
         orig_lbl = QLabel(f"<div>{bs_html}</div><div style='margin-top:5px; font-size:14px;'><span style='font-weight:bold; color:#ccc;'>五行走势: </span>{p_html}</div>{b_status_html}")
         orig_lbl.setTextFormat(Qt.RichText)
