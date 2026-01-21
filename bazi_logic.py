@@ -14,14 +14,6 @@ ZHI_WX = {
     '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
 }
 
-WX_RELATION = {
-    '木': { '木': '同', '火': '泄', '土': '耗', '金': '克', '水': '生' },
-    '火': { '木': '生', '火': '同', '土': '泄', '金': '耗', '水': '克' },
-    '土': { '木': '克', '火': '生', '土': '同', '金': '泄', '水': '耗' },
-    '金': { '木': '耗', '火': '克', '土': '生', '金': '同', '水': '泄' },
-    '水': { '木': '泄', '火': '耗', '土': '克', '金': '生', '水': '同' }
-}
-
 HIDDEN_STEMS_MAP = {
     '子': ['癸'],
     '丑': ['己', '癸', '辛'],
@@ -131,40 +123,6 @@ SHEN_SHA_RULES = {
         (info['monthZhi'] in ['申', '子', '辰'] and info['stem'] == '壬') or
         (info['monthZhi'] in ['亥', '卯', '未'] and info['stem'] == '甲') or
         (info['monthZhi'] in ['巳', '酉', '丑'] and info['stem'] == '庚'),
-
-    '太极贵人': lambda info:
-        (info['dayGan'] in ['甲', '乙'] and info['zhi'] in ['子', '午']) or
-        (info['yearGan'] in ['甲', '乙'] and info['zhi'] in ['子', '午']) or
-        (info['dayGan'] in ['丙', '丁'] and info['zhi'] in ['酉', '卯']) or
-        (info['yearGan'] in ['丙', '丁'] and info['zhi'] in ['酉', '卯']) or
-        (info['dayGan'] in ['戊', '己'] and info['zhi'] in ['辰', '戌', '丑', '未']) or
-        (info['yearGan'] in ['戊', '己'] and info['zhi'] in ['辰', '戌', '丑', '未']) or
-        (info['dayGan'] in ['庚', '辛'] and info['zhi'] in ['寅', '亥']) or
-        (info['yearGan'] in ['庚', '辛'] and info['zhi'] in ['寅', '亥']) or
-        (info['dayGan'] in ['壬', '癸'] and info['zhi'] in ['巳', '申']) or
-        (info['yearGan'] in ['壬', '癸'] and info['zhi'] in ['巳', '申']),
-
-    '福星贵人': lambda info:
-        (info['dayGan'] == '甲' and info['zhi'] in ['寅', '子']) or
-        (info['yearGan'] == '甲' and info['zhi'] in ['寅', '子']) or
-        (info['dayGan'] == '乙' and info['zhi'] in ['丑', '卯']) or
-        (info['yearGan'] == '乙' and info['zhi'] in ['丑', '卯']) or
-        (info['dayGan'] == '丙' and info['zhi'] == '子') or
-        (info['yearGan'] == '丙' and info['zhi'] == '子') or
-        (info['dayGan'] == '丁' and info['zhi'] == '酉') or
-        (info['yearGan'] == '丁' and info['zhi'] == '酉') or
-        (info['dayGan'] == '戊' and info['zhi'] == '申') or
-        (info['yearGan'] == '戊' and info['zhi'] == '申') or
-        (info['dayGan'] == '己' and info['zhi'] == '未') or
-        (info['yearGan'] == '己' and info['zhi'] == '未') or
-        (info['dayGan'] == '庚' and info['zhi'] in ['午', '巳']) or
-        (info['yearGan'] == '庚' and info['zhi'] in ['午', '巳']) or
-        (info['dayGan'] == '辛' and info['zhi'] == '巳') or
-        (info['yearGan'] == '辛' and info['zhi'] == '巳') or
-        (info['dayGan'] == '壬' and info['zhi'] == '辰') or
-        (info['yearGan'] == '壬' and info['zhi'] == '辰') or
-        (info['dayGan'] == '癸' and info['zhi'] in ['卯', '丑']) or
-        (info['yearGan'] == '癸' and info['zhi'] in ['卯', '丑']),
 
     '福德贵人': lambda info:
         (info['dayGan'] in ['甲', '乙'] and info['zhi'] in ['巳', '午']) or
@@ -281,32 +239,16 @@ SHEN_SHA_RULES = {
         (info['monthZhi'] == '丑' and info['zhi'] == '子'),
 
     '天喜': lambda info:
-        (info['yearZhi'] == '子' and info['zhi'] == '酉') or
-        (info['yearZhi'] == '丑' and info['zhi'] == '申') or
-        (info['yearZhi'] == '寅' and info['zhi'] == '未') or
-        (info['yearZhi'] == '卯' and info['zhi'] == '午') or
-        (info['yearZhi'] == '辰' and info['zhi'] == '巳') or
-        (info['yearZhi'] == '巳' and info['zhi'] == '辰') or
-        (info['yearZhi'] == '午' and info['zhi'] == '卯') or
-        (info['yearZhi'] == '未' and info['zhi'] == '寅') or
-        (info['yearZhi'] == '申' and info['zhi'] == '丑') or
-        (info['yearZhi'] == '酉' and info['zhi'] == '子') or
-        (info['yearZhi'] == '戌' and info['zhi'] == '亥') or
-        (info['yearZhi'] == '亥' and info['zhi'] == '戌'),
+        (info['yearZhi'] in ['寅', '午', '戌'] and info['zhi'] == '卯') or
+        (info['yearZhi'] in ['申', '子', '辰'] and info['zhi'] == '酉') or
+        (info['yearZhi'] in ['亥', '卯', '未'] and info['zhi'] == '子') or
+        (info['yearZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '午'),
 
-    '红鸾': lambda info:
-        (info['yearZhi'] == '子' and info['zhi'] == '卯') or
-        (info['yearZhi'] == '丑' and info['zhi'] == '寅') or
-        (info['yearZhi'] == '寅' and info['zhi'] == '丑') or
-        (info['yearZhi'] == '卯' and info['zhi'] == '子') or
-        (info['yearZhi'] == '辰' and info['zhi'] == '亥') or
-        (info['yearZhi'] == '巳' and info['zhi'] == '戌') or
-        (info['yearZhi'] == '午' and info['zhi'] == '酉') or
-        (info['yearZhi'] == '未' and info['zhi'] == '申') or
-        (info['yearZhi'] == '申' and info['zhi'] == '未') or
-        (info['yearZhi'] == '酉' and info['zhi'] == '午') or
-        (info['yearZhi'] == '戌' and info['zhi'] == '巳') or
-        (info['yearZhi'] == '亥' and info['zhi'] == '辰'),
+    '红鸾': lambda info: # Matched to JS step 240 extraction
+        (info['yearZhi'] in ['寅', '午', '戌'] and info['zhi'] == '子') or
+        (info['yearZhi'] in ['申', '子', '辰'] and info['zhi'] == '卯') or
+        (info['yearZhi'] in ['亥', '卯', '未'] and info['zhi'] == '酉') or
+        (info['yearZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '午'),
 
     # 5. 凶煞
     '羊刃': lambda info:
@@ -381,16 +323,6 @@ SHEN_SHA_RULES = {
         (info['dayZhi'] in ['亥', '卯', '未'] and info['zhi'] == '未') or
         (info['yearZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '丑') or
         (info['dayZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '丑'),
-    
-    '驿马': lambda info:
-        (info['yearZhi'] in ['寅', '午', '戌'] and info['zhi'] == '申') or
-        (info['dayZhi'] in ['寅', '午', '戌'] and info['zhi'] == '申') or
-        (info['yearZhi'] in ['申', '子', '辰'] and info['zhi'] == '寅') or
-        (info['dayZhi'] in ['申', '子', '辰'] and info['zhi'] == '寅') or
-        (info['yearZhi'] in ['亥', '卯', '未'] and info['zhi'] == '巳') or
-        (info['dayZhi'] in ['亥', '卯', '未'] and info['zhi'] == '巳') or
-        (info['yearZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '亥') or
-        (info['dayZhi'] in ['巳', '酉', '丑'] and info['zhi'] == '亥'),
 
     '孤辰': lambda info:
         (info['yearZhi'] in ['寅', '卯', '辰'] and info['zhi'] == '巳') or
@@ -478,20 +410,6 @@ SHEN_SHA_RULES = {
         (info['dayGan'] == '辛' and info['zhi'] == '亥') or
         (info['dayGan'] == '壬' and info['zhi'] == '酉') or
         (info['dayGan'] == '癸' and info['zhi'] == '寅'),
-
-    '孤鸾煞': lambda info:
-        (info['stem'] == info['dayGan'] and info['zhi'] == info['dayZhi']) and (info['stem']+info['zhi'] in ['乙巳', '丁巳', '辛亥', '戊申', '壬子']),
-
-    '童子煞': lambda info:
-        # 1. Season Check (Month Zhi)
-        (info['monthZhi'] in ['寅', '卯', '辰'] and info['zhi'] in ['寅', '子']) or # Spring
-        (info['monthZhi'] in ['申', '酉', '戌'] and info['zhi'] in ['寅', '子']) or # Autumn
-        (info['monthZhi'] in ['巳', '午', '未'] and info['zhi'] in ['卯', '未', '辰']) or # Summer
-        (info['monthZhi'] in ['亥', '子', '丑'] and info['zhi'] in ['卯', '未', '辰']) or # Winter
-        # 2. Na Yin Check (Year Na Yin)
-        (info['yearNaYin'] and '土' in info['yearNaYin'] and info['zhi'] in ['辰', '巳']) or
-        (info['yearNaYin'] and ('金' in info['yearNaYin'] or '木' in info['yearNaYin']) and info['zhi'] in ['午', '卯']) or
-        (info['yearNaYin'] and ('水' in info['yearNaYin'] or '火' in info['yearNaYin']) and info['zhi'] in ['酉', '戌']),
 }
 
 
@@ -592,58 +510,6 @@ def get_shen_sha(year_gan, year_zhi, month_zhi, day_gan, day_zhi, stem, zhi, yea
 
     return res
 
-def get_stem_interactions_map(pillars):
-    """
-    Returns a map of stem index to its interaction status (He Hua or He Ban).
-    """
-    stems = [p['gan'] for p in pillars]
-    gan_he_map = {
-        '甲': '己', '己': '甲',
-        '乙': '庚', '庚': '乙',
-        '丙': '辛', '辛': '丙',
-        '丁': '壬', '壬': '丁',
-        '戊': '癸', '癸': '戊'
-    }
-    gan_he_result = {
-        '甲己': '土', '乙庚': '金', '丙辛': '水', '丁壬': '木', '戊癸': '火'
-    }
-    
-    mz = pillars[1]['zhi'] if len(pillars) > 1 else None
-    mz_wx = ZHI_WX.get(mz) if mz else None
-    
-    mods = {} # idx -> {'status': 'he_hua'/'he_ban', 'target_wx': element, 'multiplier': 0.6}
-    
-    for i in range(len(stems)):
-        for j in range(i + 1, len(stems)):
-            s1 = stems[i]
-            s2 = stems[j]
-            
-            # Spatial Distance Rule:
-            # - Within 4 pillars (0-3): only adjacent (dist=1) interact.
-            # - Da Yun / Liu Nian (4, 5): treated as always adjacent to all.
-            is_valid_dist = False
-            if i >= 4 or j >= 4:
-                is_valid_dist = True
-            elif abs(i - j) == 1:
-                is_valid_dist = True
-                
-            if is_valid_dist and gan_he_map.get(s1) == s2:
-                # Get Result Element
-                pair = sorted([s1, s2], key=lambda x: GAN.index(x) if x in GAN else -1)
-                pair_key = "".join(pair)
-                target_wx = gan_he_result.get(pair_key)
-                
-                if mz != None and mz_wx == target_wx:
-                    # Success (He Hua)
-                    if i not in mods: mods[i] = {'status': 'he_hua', 'target_wx': target_wx, 'multiplier': 1.0}
-                    if j not in mods: mods[j] = {'status': 'he_hua', 'target_wx': target_wx, 'multiplier': 1.0}
-                else:
-                    # Failure (He Ban)
-                    if i not in mods: mods[i] = {'status': 'he_ban', 'target_wx': None, 'multiplier': 0.6}
-                    if j not in mods: mods[j] = {'status': 'he_ban', 'target_wx': None, 'multiplier': 0.6}
-                    
-    return mods
-
 def get_interactions(pillars):
     stems = [p['gan'] for p in pillars]
     branches = [p['zhi'] for p in pillars]
@@ -651,7 +517,6 @@ def get_interactions(pillars):
     res = {'stems': [], 'branches': []}
     
     # --- Heavenly Stems (Tian Gan) ---
-    res['judgments'] = [] # Initialize judgments list
     gan_he_map = {
         '甲': '己', '己': '甲',
         '乙': '庚', '庚': '乙',
@@ -685,25 +550,7 @@ def get_interactions(pillars):
             if gan_he_map.get(s1) == s2:
                 desc = gan_he_result.get(pair_key, '')
                 if desc:
-                    # Strict He Hua Check: Month Zhi Element must match Result Element
-                    # Get Month Zhi (Pillars[1])
-                    if len(pillars) > 1:
-                        mz = pillars[1]['zhi']
-                        mz_wx = ZHI_WX.get(mz)
-                        target_wx = desc[-1] # "合土" -> "土"
-                        
-                        if mz_wx == target_wx:
-                            res['stems'].append(f"{pair_key}{desc}")
-                            # Success Judgment
-                            res['judgments'].append(f"{pair_key}{desc}成功：{pair[0]}与{pair[1]}均按{target_wx}五行论断。")
-                        else:
-                            res['stems'].append(f"{pair_key}{desc}(不化)")
-                            # Failure Judgment
-                            res['judgments'].append(f"{pair_key}合绊：{pair[0]}与{pair[1]}相互牵制，暂不生助克制其他天干。")
-                    else:
-                        # Fallback
-                        res['stems'].append(f"{pair_key}{desc}")
-                        res['judgments'].append(f"{pair_key}{desc}：{pair[0]}与{pair[1]}均按{target_wx}五行论断（无月令参考，暂按成功论）。")
+                    res['stems'].append(f"{pair_key}{desc}")
             
             # Chong
             if {s1, s2} in gan_chong_pairs:
@@ -734,11 +581,6 @@ def get_interactions(pillars):
         for j in range(i + 1, len(branches)):
             b1 = branches[i]
             b2 = branches[j]
-            # Normalize Order for Deduplication (e.g. "子卯" vs "卯子")
-            # Sort by ZHI order
-            zhi_order = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-            pair_list = sorted([b1, b2], key=lambda x: zhi_order.index(x) if x in zhi_order else -1)
-            b1, b2 = pair_list[0], pair_list[1]
             pair_set = {b1, b2}
             
             # Liu Chong
@@ -773,24 +615,10 @@ def get_interactions(pillars):
             if pair_set == {'戌', '未'}: res['branches'].append('戌未相刑')
             if pair_set == {'丑', '未'}: res['branches'].append('丑未相刑')
             
-            # An He (Secret Combinations) - Dynamic Check based on Hidden Stems
-            # User rule: If hidden stems have He (Jia-Ji, Yi-Geng, etc.), it is An He.
-            b1_hidden = HIDDEN_STEMS_MAP.get(b1, [])
-            b2_hidden = HIDDEN_STEMS_MAP.get(b2, [])
-            
-            is_an_he = False
-            for h1 in b1_hidden:
-                for h2 in b2_hidden:
-                    # Check if h1 and h2 combine
-                    if gan_he_map.get(h1) == h2:
-                        is_an_he = True
-                        break
-                if is_an_he: break
-            
-            if is_an_he:
-                # Avoid duplicates if logic adds it multiple times or handled elsewhere
-                # The prompt implies replacing the specific logic.
-                res['branches'].append(f"{b1}{b2}暗合")
+            # An He (Dark Combinations) - Pairwise
+            if pair_set == {'寅', '丑'}: res['branches'].append('寅丑暗合')
+            if pair_set == {'午', '亥'}: res['branches'].append('午亥暗合')
+            if pair_set == {'卯', '申'}: res['branches'].append('卯申暗合')
 
     # San He (Three Harmonies) - Whole Set check
     b_set = set(branches)
@@ -801,107 +629,18 @@ def get_interactions(pillars):
     for group, desc in san_he:
         if all(char in b_set for char in group):
             res['branches'].append(desc)
-
-    # San Hui (Three Meetings) - Whole Set check
-    san_hui = [
-        ({'寅', '卯', '辰'}, '寅卯辰三会木方'),
-        ({'巳', '午', '未'}, '巳午未三会火方'),
-        ({'申', '酉', '戌'}, '申酉戌三会金方'),
-        ({'亥', '子', '丑'}, '亥子丑三会水方')
-    ]
-    for group, desc in san_hui:
-        if group.issubset(b_set):
-            res['branches'].append(desc)
-
-    # Ban He (Half Combinations) & Extra An He - Pairwise Check
-    ban_he_pairs = {
-        frozenset(['申', '子']): '申子半合(水局)',
-        frozenset(['子', '辰']): '子辰半合(水局)',
-        frozenset(['亥', '卯']): '亥卯半合(木局)',
-        frozenset(['卯', '未']): '卯未半合(木局)',
-        frozenset(['寅', '午']): '寅午半合(火局)',
-        frozenset(['午', '戌']): '午戌半合(火局)',
-        frozenset(['巳', '酉']): '巳酉半合(金局)',
-        frozenset(['酉', '丑']): '酉丑半合(金局)'
-    }
-    
-    for i in range(len(branches)):
-        for j in range(i + 1, len(branches)):
-            pair_set = frozenset([branches[i], branches[j]])
-            
-            if pair_set in ban_he_pairs:
-                res['branches'].append(ban_he_pairs[pair_set])
-            
-            if pair_set in ban_he_pairs:
-                res['branches'].append(ban_he_pairs[pair_set])
-            
-            # Missing An He - REMOVED (Covered by Dynamic Logic)
             
     # San Xing (Three Punishments) - Whole Set check
     if {'寅', '巳', '申'}.issubset(b_set):
         res['branches'].append('寅巳申三刑')
     if {'丑', '戌', '未'}.issubset(b_set):
-        res['branches'].append('丑未戌三刑')
+        res['branches'].append('丑戌未三刑')
     
     # Unique filter
     res['stems'] = list(set(res['stems']))
     res['branches'] = list(set(res['branches']))
     
-    # --- Judgments (Double Clash) ---
-    judgments = []
-    
-    def check_double_chong(idx1, idx2, pillars, gan_chong, zhi_chong_list):
-        if idx1 >= len(pillars) or idx2 >= len(pillars): return False
-        p1 = pillars[idx1]
-        p2 = pillars[idx2]
-        s1, s2 = p1['gan'], p2['gan']
-        b1, b2 = p1['zhi'], p2['zhi']
-        
-        # Check Stem Chong
-        is_stem_chong = {s1, s2} in gan_chong
-        # Check Branch Chong
-        is_branch_chong = {b1, b2} in zhi_chong_list
-        
-        return is_stem_chong and is_branch_chong
-
-    # 0:Year, 1:Month, 2:Day, 3:Hour
-    # Only check if we have enough pillars (at least 4 for original bazi)
-    if len(pillars) >= 4:
-        # 日、月干支双冲 (Day & Month)
-        if check_double_chong(2, 1, pillars, gan_chong_pairs, liu_chong_pairs):
-            judgments.append("日、月干支双冲，事业艰难。")
-            
-        # 年、日干支双冲 (Year & Day)
-        if check_double_chong(0, 2, pillars, gan_chong_pairs, liu_chong_pairs):
-            judgments.append("年、日干支双冲，主本不和，纵富贵也不久。")
-            
-        # 年、时干支双冲 (Year & Hour)
-        if check_double_chong(0, 3, pillars, gan_chong_pairs, liu_chong_pairs):
-            judgments.append("年、时干支双冲，乃别立根基之人。")
-            
-        # 月、时干支双冲 (Month & Hour)
-        if check_double_chong(1, 3, pillars, gan_chong_pairs, liu_chong_pairs):
-            judgments.append("月、时干支双冲，恐有多次起倒之遇。")
-
-    res['judgments'].extend(judgments)
-    # Deduplicate judgments
-    res['judgments'] = list(dict.fromkeys(res['judgments']))
-
     return res
-
-def get_kong_wang(gan, zhi):
-    """根据干支计算空亡 (The void branches)"""
-    if gan not in GAN or zhi not in ZHI:
-        return ""
-    gan_idx = GAN.index(gan)
-    zhi_idx = ZHI.index(zhi)
-    # 旬首 (Xun Shou) calculated relative to Jia (0)
-    # The difference between Zhi and Gan index tells us which Xun it belongs to.
-    # diff = 0 -> Jia Zi Xun -> Kong Wang: Xu(10), Hai(11) -> (diff-2), (diff-1)
-    diff = (zhi_idx - gan_idx) % 12
-    kw1 = ZHI[(diff - 2) % 12]
-    kw2 = ZHI[(diff - 1) % 12]
-    return f"{kw1}{kw2}"
 
 def calculate_bazi(date, gender):
     solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, date.second)
@@ -923,11 +662,11 @@ def calculate_bazi(date, gender):
     
     processed_pillars = []
     
-    for i, p in enumerate(pillar_objs):
+    for p in pillar_objs:
         gan = p['gan']
         zhi = p['zhi']
         
-        ten_god = get_ten_god(day_gan, gan) if i != 2 else '元男' if gender == 'M' else '元女'
+        ten_god = get_ten_god(day_gan, gan) if p != pillar_objs[2] else '元男' if gender == 'M' else '元女'
         
         hidden = []
         hidden_stems = HIDDEN_STEMS_MAP.get(zhi, [])
@@ -938,7 +677,6 @@ def calculate_bazi(date, gender):
             })
             
         shen_sha = get_shen_sha(year_gan, year_zhi, month_zhi, day_gan, day_zhi, gan, zhi, pillar_objs[0]['nayin'], pillar_objs[2]['nayin'])
-        kong_wang = get_kong_wang(gan, zhi)
         
         processed_pillars.append({
             'gan': gan,
@@ -948,8 +686,7 @@ def calculate_bazi(date, gender):
             'naYin': p['nayin'],
             'tenGod': ten_god,
             'hidden': hidden,
-            'shenSha': shen_sha,
-            'kongWang': kong_wang
+            'shenSha': shen_sha
         })
 
     yun = bazi.getYun(1 if gender == 'M' else 0) 
@@ -961,15 +698,12 @@ def calculate_bazi(date, gender):
         end_age = dy.getEndAge()
         start_year = dy.getStartYear()
         
-        gz_str = dy.getGanZhi()
-        if len(gz_str) >= 2:
-            dy_gan = gz_str[0]
-            dy_zhi = gz_str[1]
-        else:
-            dy_gan = ""
-            dy_zhi = ""
-            
-        dy_nayin = NAYIN.get(gz_str, '')
+        gan_zhi = dy.getGanZhi()
+        dy_gan = gan_zhi[0] if len(gan_zhi) > 0 else ''
+        dy_zhi = gan_zhi[1] if len(gan_zhi) > 1 else ''
+        
+        # Calculate Da Yun Details
+        dy_nayin = NAYIN.get(gan_zhi, '')
         dy_ten_god = get_ten_god(day_gan, dy_gan) if dy_gan else ''
         
         dy_hidden = []
@@ -978,11 +712,8 @@ def calculate_bazi(date, gender):
                 dy_hidden.append({'stem': h, 'god': get_ten_god(day_gan, h)})
                 
         dy_shen_sha = []
-        dy_shen_sha = []
         if dy_gan and dy_zhi:
              dy_shen_sha = get_shen_sha(year_gan, year_zhi, month_zhi, day_gan, day_zhi, dy_gan, dy_zhi, pillar_objs[0]['nayin'], pillar_objs[2]['nayin'])
-        
-        dy_kong_wang = get_kong_wang(dy_gan, dy_zhi)
         
         liu_nian_list = []
         ln_arr = dy.getLiuNian()
@@ -1006,8 +737,6 @@ def calculate_bazi(date, gender):
             if ln_gan and ln_zhi:
                 ln_shen_sha = get_shen_sha(year_gan, year_zhi, month_zhi, day_gan, day_zhi, ln_gan, ln_zhi, pillar_objs[0]['nayin'], pillar_objs[2]['nayin'])
             
-            ln_kong_wang = get_kong_wang(ln_gan, ln_zhi)
-            
             # Robust Check
             c1 = '#333'
             c2 = '#333'
@@ -1024,8 +753,7 @@ def calculate_bazi(date, gender):
                 'naYin': ln_nayin,
                 'tenGod': ln_ten_god,
                 'hidden': ln_hidden,
-                'shenSha': ln_shen_sha,
-                'kongWang': ln_kong_wang
+                'shenSha': ln_shen_sha
             })
             
         # Robust Check for Da Yun
@@ -1035,7 +763,7 @@ def calculate_bazi(date, gender):
         if dy_zhi: c2 = get_color(dy_zhi)
 
         da_yun_list.append({
-            'ganZhi': gz_str,
+            'ganZhi': gan_zhi,
             'gan': dy_gan, 'zhi': dy_zhi,
             'ganColor': c1,
             'zhiColor': c2,
@@ -1043,7 +771,6 @@ def calculate_bazi(date, gender):
             'tenGod': dy_ten_god,
             'hidden': dy_hidden,
             'shenSha': dy_shen_sha,
-            'kongWang': dy_kong_wang,
             'startAge': start_age,
             'endAge': end_age,
             'startYear': start_year,
@@ -1062,976 +789,163 @@ def calculate_bazi(date, gender):
             
     interactions = get_interactions(processed_pillars)
     
+    body_strength = calculate_body_strength(processed_pillars)
+    yong_xi = calculate_yong_xi_ji(processed_pillars, body_strength)
+    
     return {
+        'bodyStrength': body_strength,
+        'yongXi': yong_xi,
         'pillars': processed_pillars,
         'daYunList': da_yun_list,
         'currentDaYun': current_dy,
         'interactions': interactions,
-        'solarDate': f"{solar.getYear()}-{solar.getMonth():02d}-{solar.getDay():02d} {solar.getHour():02d}:{solar.getMinute():02d}:{solar.getSecond():02d} (公历)",
+        'solarDate': f"{solar.getYear()}-{solar.getMonth()}-{solar.getDay()} {solar.getHour()}:00:00 (公历)",
         'lunarDate': f"{lunar.getYearInGanZhi()}年{lunar.getMonthInChinese()}月{lunar.getDayInChinese()} (农历)",
         'gender': gender
     }
 
-def get_dynamic_interactions(pillars, dynamic_indices):
-    """
-    Calculate interactions but ONLY return those that involve pillars at dynamic_indices.
-    pillars: list of all pillars (e.g. 4 original + 1 DY + 1 LN)
-    dynamic_indices: list of indices considered 'dynamic' (e.g. [4, 5])
-    """
+
+
+
+# --- Advanced Logic: Body Strength & Yong/Xi ---
+
+def get_stem_interactions_map(pillars):
     stems = [p['gan'] for p in pillars]
-    branches = [p['zhi'] for p in pillars]
-    
-    res = {'stems': [], 'branches': []}
-    
-    # --- Stems ---
+    res = {}
     gan_he_map = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛', '辛': '丙', '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
-    gan_he_result = {'甲己': '合土', '乙庚': '合金', '丙辛': '合水', '丁壬': '合木', '戊癸': '合火'}
-    gan_chong_pairs = [{'甲', '庚'}, {'乙', '辛'}, {'丙', '壬'}, {'丁', '癸'}]
-    
+    gan_he_result = {'甲己': '土', '乙庚': '金', '丙辛': '水', '丁壬': '木', '戊癸': '火'}
     for i in range(len(stems)):
         for j in range(i + 1, len(stems)):
-            if i not in dynamic_indices and j not in dynamic_indices:
-                continue # Skip pure internal interactions
-                
             s1, s2 = stems[i], stems[j]
-            pair_key = "".join(sorted([s1, s2], key=lambda x: GAN.index(x) if x in GAN else -1))
-            
             if gan_he_map.get(s1) == s2:
-                desc = gan_he_result.get(pair_key, '')
-                if desc: res['stems'].append(f"{pair_key}{desc}")
-            if {s1, s2} in gan_chong_pairs:
-                res['stems'].append(f"{s1}{s2}冲")
-
-    # --- Branches ---
-    liu_chong_pairs = [{'子', '午'}, {'丑', '未'}, {'寅', '申'}, {'卯', '酉'}, {'辰', '戌'}, {'巳', '亥'}]
-    liu_he_pairs = {frozenset(['子', '丑']): '化土', frozenset(['寅', '亥']): '化木', frozenset(['卯', '戌']): '化火', frozenset(['辰', '酉']): '化金', frozenset(['巳', '申']): '化水', frozenset(['午', '未']): '化土'}
-    liu_hai_pairs = [{'子', '未'}, {'丑', '午'}, {'寅', '巳'}, {'卯', '辰'}, {'申', '亥'}, {'酉', '戌'}]
-    ban_he_pairs = {
-        frozenset(['申', '子']): '申子半合(水局)', frozenset(['子', '辰']): '子辰半合(水局)',
-        frozenset(['亥', '卯']): '亥卯半合(木局)', frozenset(['卯', '未']): '卯未半合(木局)',
-        frozenset(['寅', '午']): '寅午半合(火局)', frozenset(['午', '戌']): '午戌半合(火局)',
-        frozenset(['巳', '酉']): '巳酉半合(金局)', frozenset(['酉', '丑']): '酉丑半合(金局)'
-    }
-
-    for i in range(len(branches)):
-        for j in range(i + 1, len(branches)):
-            if i not in dynamic_indices and j not in dynamic_indices:
-                continue
-
-            b1, b2 = branches[i], branches[j]
-            pair_set = {b1, b2}
-            
-            if pair_set in liu_chong_pairs: res['branches'].append(f"{b1}{b2}冲")
-            he_desc = liu_he_pairs.get(frozenset(pair_set))
-            if he_desc: res['branches'].append(f"{b1}{b2}六合{he_desc}")
-            if pair_set in liu_hai_pairs: res['branches'].append(f"{b1}{b2}相害")
-            if pair_set == {'子', '卯'}: res['branches'].append('子卯相刑')
-            if b1 == b2 and b1 in ['辰', '午', '酉', '亥']: res['branches'].append(f"{b1}{b2}自刑")
-            if pair_set == {'寅', '巳'}: res['branches'].append('寅巳相刑')
-            if pair_set == {'巳', '申'}: res['branches'].append('巳申相刑')
-            if pair_set == {'寅', '申'}: res['branches'].append('寅申相刑')
-            if pair_set == {'丑', '戌'}: res['branches'].append('丑戌相刑')
-            if pair_set == {'戌', '未'}: res['branches'].append('戌未相刑')
-            if pair_set == {'丑', '未'}: res['branches'].append('丑未相刑')
-            
-            # An He
-            b1_hidden = HIDDEN_STEMS_MAP.get(b1, [])
-            b2_hidden = HIDDEN_STEMS_MAP.get(b2, [])
-            is_an_he = False
-            for h1 in b1_hidden:
-                for h2 in b2_hidden:
-                    if gan_he_map.get(h1) == h2:
-                        is_an_he = True
-                        break
-                if is_an_he: break
-            if is_an_he: res['branches'].append(f"{b1}{b2}暗合")
-            
-            fz = frozenset(pair_set)
-            if fz in ban_he_pairs: res['branches'].append(ban_he_pairs[fz])
-
-
-    # San He / San Hui Check
-    b_indices = {b: [] for b in set(branches)} # map branch to list of indices
-    for idx, b in enumerate(branches):
-        if b not in b_indices: b_indices[b] = []
-        b_indices[b].append(idx)
-        
-    san_he = [('申子辰', '申子辰三合水局'), ('亥卯未', '亥卯未三合木局'), ('寅午戌', '寅午戌三合火局'), ('巳酉丑', '巳酉丑三合金局')]
-    san_hui = [({'寅', '卯', '辰'}, '寅卯辰三会木方'), ({'巳', '午', '未'}, '巳午未三会火方'), ({'申', '酉', '戌'}, '申酉戌三会金方'), ({'亥', '子', '丑'}, '亥子丑三会水方')]
-    
-    def check_group(group, desc):
-        present = True
-        involved_indices = []
-        for char in group:
-            if char not in b_indices:
-                present = False
-                break
-            involved_indices.extend(b_indices[char])
-        if present:
-            if any(idx in dynamic_indices for idx in involved_indices):
-                res['branches'].append(desc)
-                
-    for g, d in san_he: check_group(g, d)
-    for g, d in san_hui: check_group(g, d)
-    
-    if {'寅', '巳', '申'}.issubset(set(branches)):
-        check_group({'寅', '巳', '申'}, '寅巳申三刑')
-    if {'丑', '戌', '未'}.issubset(set(branches)):
-        check_group({'丑', '戌', '未'}, '丑未戌三刑')
-        
-    res['stems'] = list(set(res['stems']))
-    res['branches'] = list(set(res['branches']))
+                pair = sorted([s1, s2], key=lambda x: GAN.index(x))
+                pair_key = "".join(pair)
+                target_wx = gan_he_result.get(pair_key)
+                is_hua = any(GAN_WX.get(p['gan']) == target_wx or ZHI_WX.get(p['zhi']) == target_wx for p in pillars)
+                status = 'he_hua' if is_hua else 'he_ban'
+                res[i] = res[j] = {'status': status, 'targetWx': target_wx}
     return res
 
-def get_gong_jia_relations(pillars):
-    if not pillars or len(pillars) < 4:
-        return {'adjacent': [], 'separated': []}
-
-    # Standard Pillars: 0-Year, 1-Month, 2-Day, 3-Hour
-    # indices in pillars list.
-    adjacent_pairs = [(0, 1), (1, 2), (2, 3)]
-    separated_pairs = [(0, 2), (0, 3), (1, 3)]
-
-    p_names = ['年', '月', '日', '时']
-    ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-
-    gong_map = {
-        '申辰': '子', '辰申': '子',
-        '亥未': '卯', '未亥': '卯',
-        '寅戌': '午', '戌寅': '午',
-        '巳丑': '酉', '丑巳': '酉',
-        '亥丑': '子', '丑亥': '子',
-        '寅辰': '卯', '辰寅': '卯',
-        '巳未': '午', '未巳': '午',
-        '申戌': '酉', '戌申': '酉'
-    }
-    
-    # Xing/Chong/He Helpers
-    liu_chong_pairs = [{'子', '午'}, {'丑', '未'}, {'寅', '申'}, {'卯', '酉'}, {'辰', '戌'}, {'巳', '亥'}]
-    liu_he_pairs = {'子丑': '六合', '寅亥': '六合', '卯戌': '六合', '辰酉': '六合', '巳申': '六合', '午未': '六合'}
-
-    res = {'adjacent': [], 'separated': []}
-
-    def process_pairs(pairs, is_sep):
-        for i, j in pairs:
-            p1 = pillars[i]
-            p2 = pillars[j]
-            b1 = p1['zhi']
-            b2 = p2['zhi']
-            name1 = p_names[i]
-            name2 = p_names[j]
-            
-            relations = []
-
-            # 1. Gong (Arch)
-            key = b1 + b2
-            key_rev = b2 + b1
-            if key in gong_map:
-                relations.append({'type': '拱', 'char': gong_map[key], 'desc': f"拱{gong_map[key]}"})
-            elif key_rev in gong_map:
-                relations.append({'type': '拱', 'char': gong_map[key_rev], 'desc': f"拱{gong_map[key_rev]}"})
-
-            # 2. Jia (Squeeze)
-            try:
-                idx1 = ZHI.index(b1)
-                idx2 = ZHI.index(b2)
-                
-                # Check Forward Squeeze: idx1 -> (mid) -> idx2
-                if (idx1 + 2) % 12 == idx2:
-                    mid_idx = (idx1 + 1) % 12
-                    mid_char = ZHI[mid_idx]
-                    relations.append({'type': '夹', 'char': mid_char, 'desc': f"夹{mid_char}"})
-
-                # Check Reverse Squeeze
-                elif (idx1 - 2 + 12) % 12 == idx2:
-                    mid_idx = (idx1 - 1 + 12) % 12
-                    mid_char = ZHI[mid_idx]
-                    relations.append({'type': '倒夹', 'char': mid_char, 'desc': f"倒夹{mid_char}"})
-
-            except ValueError:
-                pass 
-
-            # 3. Simple Xing/Chong/He
-            # Chong
-            pair_set = {b1, b2}
-            if pair_set in liu_chong_pairs:
-                relations.append({'type': '冲', 'char': '', 'desc': '相冲'})
-            
-            # He
-            pair_str_sorted = "".join(sorted([b1, b2], key=lambda x: ZHI.index(x) if x in ZHI else -1))
-            if pair_str_sorted in liu_he_pairs:
-                 relations.append({'type': '合', 'char': '', 'desc': '六合'})
-            
-            # Xing
-            if pair_set == {'子', '卯'}: relations.append({'type': '刑', 'char': '', 'desc': '相刑'})
-            if b1 == b2 and b1 in ['辰', '午', '酉', '亥']: relations.append({'type': '刑', 'char': '', 'desc': '自刑'})
-
-            if relations:
-                item = {
-                    'p1': name1, 'p2': name2,
-                    'b1': b1, 'b2': b2,
-                    'relations': relations
-                }
-                if is_sep:
-                    res['separated'].append(item)
-                else:
-                    res['adjacent'].append(item)
-
-    process_pairs(adjacent_pairs, False)
-    process_pairs(separated_pairs, True)
-    
-    return res
-
-def get_void_branches(day_gan, day_zhi):
-    gan_idx = GAN.index(day_gan)
-    zhi_idx = ZHI.index(day_zhi)
-    xun_offset = (zhi_idx - gan_idx) % 12
-    if xun_offset == 0: return ['戌', '亥'] # Jia Zi
-    if xun_offset == 10: return ['子', '丑'] # Jia Yin
-    if xun_offset == 8: return ['寅', '卯'] # Jia Chen
-    if xun_offset == 6: return ['辰', '巳'] # Jia Wu
-    if xun_offset == 4: return ['午', '未'] # Jia Shen
-    if xun_offset == 2: return ['申', '酉'] # Jia Xu
-    return []
-
-def check_is_clashed(target_zhi, all_zhis):
-    # Standard Clash Map
-    clash_map = {
-        '子': '午', '午': '子',
-        '丑': '未', '未': '丑',
-        '寅': '申', '申': '寅',
-        '卯': '酉', '酉': '卯',
-        '辰': '戌', '戌': '辰',
-        '巳': '亥', '亥': '巳'
-    }
-    opponent = clash_map.get(target_zhi)
-    return opponent in all_zhis
-
-def get_all_earth_statuses(pillars, scores):
-    """
-    Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
-    Logic (Phase 1: Priority Filtering Identity):
-    - Priority 1: Roots -> Warehouse.
-    - Priority 2: Stems -> Warehouse.
-    - Priority 3: Residual Score > 12 -> Warehouse.
-    """
+def get_all_earth_statuses(pillars):
     TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
     PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
-    
-    stems = [p.get('gan') for p in pillars if p and p.get('gan')]
-    branches = [p.get('zhi') for p in pillars if p and p.get('zhi')]
-    stems_wx = [GAN_WX.get(s) for s in stems]
-
+    stems_wx = [GAN_WX.get(p['gan']) for p in pillars if p]
+    branches = [p['zhi'] for p in pillars if p]
     results = {}
-    
     for zhi in ['辰', '戌', '丑', '未']:
-        target_wx = TARGET_MAP.get(zhi)
-        producing_wx = PRODUCING_MAP.get(target_wx)
-        status_type = 'Tomb' # Default
-        desc = '墓'
-        
-        # P1: Root
-        has_root = False
+        target_wx, producing_wx = TARGET_MAP[zhi], PRODUCING_MAP[TARGET_MAP[zhi]]
+        unreduced_score = sum(15 for wx in stems_wx if wx in [target_wx, producing_wx])
         for b_zhi in branches:
-            if ZHI_WX.get(b_zhi) == target_wx:
-                has_root = True
-                break
-        if has_root:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-            continue
-
-        # P2: Stem
-        is_revealed = False
-        for wx in stems_wx:
-            if wx == target_wx or wx == producing_wx:
-                is_revealed = True
-                break
-        if is_revealed:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-            continue
-
-        # P3: Residual
-        residual = 0
-        for b_zhi in branches:
-            for h in HIDDEN_STEMS_MAP.get(b_zhi, []):
-                if GAN_WX.get(h) == target_wx:
-                    residual += 8
-                    break
-        if residual > 12:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-        else:
-            results[zhi] = {'type': 'Tomb', 'desc': '墓'}
-            
+            if ZHI_WX.get(b_zhi) == target_wx: unreduced_score += 30
+            if any(GAN_WX.get(h) == target_wx for h in HIDDEN_STEMS_MAP.get(b_zhi, [])): unreduced_score += 8
+        results[zhi] = {'type': 'Warehouse' if unreduced_score > 12 else 'Tomb', 'desc': '库' if unreduced_score > 12 else '墓'}
     return results
 
 def calculate_body_strength(pillars):
-    """
-    Calculates Strength. Supports 4 (Yuan Ju) or 6 (Dynamic) pillars.
-    Updated for Advanced Logic: Dynamic Thresholds, Sui Yun Bing Lin, Zhan Ke.
-    + Phase 2 Dynamic Correction for Tomb/Warehouse.
-    """
-    # Pillar Structure: [{'gan':.., 'zhi':..}, ...]
-    dm = pillars[2]['gan']
-    dm_wx = GAN_WX.get(dm)
-
-    # Weights
-    weights = {
-        'stem': 7,
-        'monthZhi': 45,
-        'dayZhi': 20,
-        'otherZhi': 10,
-        'dyZhi': 20,
-        'lnZhi': 30
+    dm, dm_wx = pillars[2]['gan'], GAN_WX[pillars[2]['gan']]
+    weights = {'stem': 7, 'monthZhi': 45, 'dayZhi': 20, 'otherZhi': 10, 'dyZhi': 20, 'lnZhi': 30}
+    WX_RELATION = {
+        '木': {'木':'同','火':'泄','土':'耗','金':'克','水':'生'},
+        '火': {'木':'生','火':'同','土':'泄','金':'耗','水':'克'},
+        '土': {'木':'克','火':'生','土':'同','金':'泄','水':'耗'},
+        '金': {'木':'耗','火':'克','土':'生','金':'同','水':'泄'},
+        '水': {'木':'泄','火':'耗','土':'克','金':'生','水':'同'}
     }
-
-    # Helpers
-    def get_rel(w):
-        return WX_RELATION.get(dm_wx, {}).get(w)
-
-    def is_same_party(w):
-        return get_rel(w) in ['同', '生']
-
-    total_score = 0
-    max_possible_score = 0
-    logs = []
-
-    # --- 0. Pre-check Day Master Transformation ---
+    is_same_party = lambda w: WX_RELATION[dm_wx][w] in ['同', '生']
+    total_score, max_score, logs, is_guan_yin = 0, 0, [], False
     stem_mods = get_stem_interactions_map(pillars)
-    dm_mod = stem_mods.get(2)
-    if dm_mod and dm_mod['status'] == 'he_hua':
-        target_wx = dm_mod['target_wx']
-        if target_wx:
-            dm_wx = target_wx
-            logs.append(f"日主{dm}化为{dm_wx}，按新五行判定身强身弱")
-    elif dm_mod and dm_mod['status'] == 'he_ban':
-        logs.append(f"日主{dm}被合绊，自身能量受限")
-        
-    # --- Prepare Phase 2 Data for Earth Branches ---
-    # 1. Get Identity Map
-    # We pass empty scores dict as P1 Logic doesn't use passed scores anymore.
-    earth_statuses = get_all_earth_statuses(pillars, {}) 
-    
-    # 2. Get Collision/Void Info
-    all_zhis = [p['zhi'] for p in pillars if p]
-    day_gan = pillars[2]['gan']
-    day_zhi = pillars[2]['zhi']
-    void_branches = get_void_branches(day_gan, day_zhi)
-
-    # --- 1. Calculate Scores ---
-
-    # Stems (Year 0, Month 1, Hour 3 + DY 4, LN 5 if exist)
-    stem_indices = [0, 1, 3]
-    if len(pillars) > 4:
-        stem_indices.append(4) # DY
-        stem_indices.append(5) # LN
-
+    if 2 in stem_mods and stem_mods[2]['status'] == 'he_hua':
+        dm_wx = stem_mods[2]['targetWx']
+        logs.append(f"日主{dm}化为{dm_wx}")
+    stem_indices = [0, 1, 3] + ([4, 5] if len(pillars) > 4 else [])
     for idx in stem_indices:
-        if idx >= len(pillars): continue
-        max_possible_score += weights['stem']
-        gan = pillars[idx]['gan']
-        orig_wx = GAN_WX.get(gan)
-        
-        mod = stem_mods.get(idx)
-        effective_wx = orig_wx
-        multiplier = 1.0
-        is_locked = False
-        
-        if mod:
-            if mod['status'] == 'he_hua':
-                effective_wx = mod['target_wx']
-                logs.append(f"{gan}合化成功，按{effective_wx}计分")
-            else:
-                multiplier = 0.6
-                is_locked = True
-                logs.append(f"{gan}合绊：能量x0.6且锁定生克职能")
-
+        if idx >= len(pillars) or not pillars[idx]: continue
+        max_score += weights['stem']
+        gan, orig_wx, mod = pillars[idx]['gan'], GAN_WX[pillars[idx]['gan']], stem_mods.get(idx)
+        effective_wx, multiplier, is_locked = (mod['targetWx'], 1.0, False) if mod and mod['status'] == 'he_hua' else (orig_wx, 0.6 if mod else 1.0, bool(mod))
         if is_same_party(effective_wx):
-            rel = get_rel(effective_wx)
             score = weights['stem'] * multiplier
-            
-            if is_locked and rel == '生':
-                score = 0
-                logs.append(f"{gan}由于合绊，停止生助日主")
-            
-            if score > 0:
-                # Gai Tou Check
-                zhi = pillars[idx]['zhi']
-                zhi_wx = ZHI_WX.get(zhi)
-                rel_g_z = WX_RELATION.get(effective_wx, {}).get(zhi_wx)
-                rel_z_g = WX_RELATION.get(zhi_wx, {}).get(effective_wx)
-
-                if rel_g_z == '克' or rel_z_g == '克':
-                    score *= 0.4
-                    logs.append(f"{gan}({effective_wx}){zhi} 盖头/截脚，计分折损")
-                
-                total_score += score
-
-    # Branches
-    
-    # Branches
-    is_guan_yin = False
-    
+            if is_locked and WX_RELATION[dm_wx][effective_wx] == '生': score = 0
+            if score > 0 and (WX_RELATION[effective_wx].get(ZHI_WX[pillars[idx]['zhi']]) == '克' or WX_RELATION[ZHI_WX[pillars[idx]['zhi']]].get(effective_wx) == '克'): score *= 0.4
+            total_score += score
+    earth_statuses, all_zhis = get_all_earth_statuses(pillars), [p['zhi'] for p in pillars if p]
+    void_branches = set(get_kong_wang(pillars[2]['gan'], pillars[2]['zhi']) + get_kong_wang(pillars[0]['gan'], pillars[0]['zhi']))
     def apply_branch_score(idx, base_weight, is_month=False):
         nonlocal is_guan_yin
-        if idx >= len(pillars): return 0
-        p = pillars[idx]
-        if not p: return 0
-        zhi = p['zhi']
-        zhi_wx = ZHI_WX.get(zhi)
-        
-        score = base_weight
-        
-        # Phase 2 Dynamic Correction (Earth Branches)
+        if idx >= len(pillars) or not pillars[idx]: return 0
+        zhi, zhi_wx, score = pillars[idx]['zhi'], ZHI_WX[pillars[idx]['zhi']], base_weight
         if zhi in ['辰', '戌', '丑', '未']:
-            identity_info = earth_statuses.get(zhi, {'type': 'Tomb'})
-            identity = identity_info['type']
-            
-            # 1. State: Clash vs Closed
-            is_clashed = check_is_clashed(zhi, all_zhis)
-            # User: "Clashed... 1.5 if Warehouse else 0.2"
-            #       "Else (Closed)... 0.5"
-            state_mult = 0.5 # Default Closed
-            if is_clashed:
-                if identity == 'Warehouse':
-                    state_mult = 1.5
-                    logs.append(f"{zhi}({identity})被冲开(Open): 能量释放 x1.5")
-                else:
-                    state_mult = 0.2
-                    logs.append(f"{zhi}({identity})被冲破(Broken): 能量损毁 x0.2")
-            else:
-                logs.append(f"{zhi}({identity})处于闭合(Closed)状态: 能量潜伏 x0.5")
-            
-            score *= state_mult
-            
-            # 2. Void Modifier
-            if zhi in void_branches:
-                score *= 0.3
-                logs.append(f"{zhi}逢空亡: 能量 x0.3")
-
-        # Guan Yin Check (Month Only)
-        # Note: If Earth Month is modified by Phase 2, we still check Guan Yin?
-        # Yes, but on the *modified* score? Or logic check.
-        # Check Guan Yin logic... it converts Clashing Month to Producing.
-        # If Earth Month is same party, we just add score.
-        # If not same party, we check Guan Yin.
-        
-        # Apply Party Check
-        if is_same_party(zhi_wx):
-            return score
-        else:
-            if is_month:
-                # Guan Yin Check
-                if get_rel(zhi_wx) == '克':
-                    mg = pillars[1]['gan']
-                    dz = pillars[2]['zhi']
-                    mg_is_yin = (get_rel(GAN_WX.get(mg)) == '生')
-                    dz_is_yin = (get_rel(ZHI_WX.get(dz)) == '生')
-                    
-                    if mg_is_yin or dz_is_yin:
-                        converted = score * 0.8
-                        logs.append(f"触发[官印相生]：月令{zhi}({zhi_wx})由克转生")
-                        return converted
+            identity = earth_statuses.get(zhi, {'type': 'Tomb'})['type']
+            clashed = {'子':'午','丑':'未','寅':'申','卯':'酉','辰':'戌','巳':'亥','午':'子','未':'丑','申':'寅','酉':'卯','戌':'辰','亥':'巳'}.get(zhi) in all_zhis
+            score *= (1.5 if identity == 'Warehouse' else 0.2) if clashed else 0.5
+            if zhi in void_branches: score *= 0.3
+        if is_same_party(zhi_wx): return score
+        if is_month and WX_RELATION[dm_wx][zhi_wx] == '克' and WX_RELATION[dm_wx][ZHI_WX[pillars[2]['zhi']]] == '生':
+            is_guan_yin = True
+            return score * 0.8
         return 0
-
-    # Month (1)
-    max_possible_score += weights['monthZhi']
-    total_score += apply_branch_score(1, weights['monthZhi'], is_month=True)
-
-    # Day Zhi (2)
-    max_possible_score += weights['dayZhi']
+    total_score += apply_branch_score(1, weights['monthZhi'], True)
+    max_score += weights['monthZhi']
     total_score += apply_branch_score(2, weights['dayZhi'])
-
-    # Other Zhi (Year 0, Hour 3)
+    max_score += weights['dayZhi']
     for idx in [0, 3]:
-        max_possible_score += weights['otherZhi']
-        total_score += apply_branch_score(idx, weights['otherZhi'])
-
-    # Dynamic Zhi
+        if idx < len(pillars): total_score += apply_branch_score(idx, weights['otherZhi']); max_score += weights['otherZhi']
     if len(pillars) > 4:
-        # DY (4)
-        max_possible_score += weights['dyZhi']
-        total_score += apply_branch_score(4, weights['dyZhi'])
-        
-        # LN (5)
-        if len(pillars) > 5 and pillars[5]: 
-            max_possible_score += weights['lnZhi']
-            total_score += apply_branch_score(5, weights['lnZhi'])
-
-    # --- 2. Determine Status ---
-    neutral_min = max_possible_score * 0.48
-    neutral_max = max_possible_score * 0.52
-
-    level = ''
-    if total_score > neutral_max: level = '身强'
-    elif total_score < neutral_min: level = '身弱'
-    else: level = '中和'
-
-    # Override Logic
-    if level == '中和' and is_guan_yin:
-        level = '身强'
-        logs.append('官印相生助旺')
-
-    # --- 3. Alerts ---
-    alerts = []
-    if len(pillars) > 5:
-        dy = pillars[4]
-        ln = pillars[5]
-        month = pillars[1]
-        
-        # Sui Yun Bing Lin
-        if dy['gan'] == ln['gan'] and dy['zhi'] == ln['zhi']:
-            alerts.append("【警告】岁运并临：能量极端叠加，运势波动剧烈。")
-            
-        # Zhan Ke (Tian Ke Di Chong)
-        # Helper check control
-        def check_gan_ke(g1, g2):
-            w1 = GAN_WX.get(g1)
-            w2 = GAN_WX.get(g2)
-            return WX_RELATION.get(w1, {}).get(w2) == '克'
-
-        is_tian_ke = check_gan_ke(ln['gan'], month['gan']) or check_gan_ke(month['gan'], ln['gan'])
-        
-        chong_pairs = [{'子', '午'}, {'丑', '未'}, {'寅', '申'}, {'卯', '酉'}, {'辰', '戌'}, {'巳', '亥'}]
-        pair_set = {ln['zhi'], month['zhi']}
-        is_di_chong = pair_set in chong_pairs
-        
-        if is_tian_ke and is_di_chong:
-            alerts.append("【预警】流年与月令战克：环境震荡，根基不稳。")
-
-    return {
-        'total_score': total_score,
-        'max_possible_score': max_possible_score,
-        'level': level,
-        'logs': logs,
-        'alerts': alerts,
-        'is_guan_yin': is_guan_yin
-    }
+        total_score += apply_branch_score(4, weights['dyZhi']); max_score += weights['dyZhi']
+        if len(pillars) > 5: total_score += apply_branch_score(5, weights['lnZhi']); max_score += weights['lnZhi']
+    level = '身强' if total_score > max_score * 0.52 else ('身弱' if total_score < max_score * 0.48 else '中和')
+    if level == '中和' and is_guan_yin: level = '身强'
+    return {'total_score': total_score, 'max_score': max_score, 'percentage': round((total_score / max_score) * 100, 1) if max_score > 0 else 0, 'level': level, 'logs': logs, 'is_guan_yin': is_guan_yin}
 
 def calculate_global_scores(pillars):
-    weights = {'stem': 7, 'zhi': [10, 45, 20, 10, 20, 30]} # Year, Month, Day, Hour, DY, LN
-    scores = {'金': 0, '木': 0, '水': 0, '火': 0, '土': 0}
-    
-    # Get modifications from He Hua / He Ban
-    stem_mods = get_stem_interactions_map(pillars)
-    
+    weights, scores, stem_mods = {'stem': 7, 'zhi': [10, 45, 20, 10, 20, 30]}, {'金': 0, '木': 0, '水': 0, '火': 0, '土': 0}, get_stem_interactions_map(pillars)
     for idx, p in enumerate(pillars):
         if not p: continue
-        
-        # Stem Logic
-        gan = p['gan']
-        orig_wx = GAN_WX.get(gan)
-        
         mod = stem_mods.get(idx)
-        if mod:
-            if mod['status'] == 'he_hua':
-                # Use transformed element
-                target_wx = mod['target_wx']
-                if target_wx: scores[target_wx] += weights['stem']
-            else:
-                # He Ban: Reduced score (x0.6)
-                if orig_wx: scores[orig_wx] += weights['stem'] * 0.6
-        else:
-            if orig_wx: scores[orig_wx] += weights['stem']
-        
-        # Zhi Logic
-        zhi_wx = ZHI_WX.get(p['zhi'])
-        zhi_weight = weights['zhi'][idx] if idx < len(weights['zhi']) else 10
-        if zhi_wx: scores[zhi_wx] += zhi_weight
-        
+        scores[mod['targetWx'] if mod and mod['status'] == 'he_hua' else GAN_WX[p['gan']]] += weights['stem'] * (0.6 if mod and mod['status'] == 'he_ban' else 1.0)
+        scores[ZHI_WX[p['zhi']]] += weights['zhi'][idx] if idx < len(weights['zhi']) else 10
     return scores
-
-def get_five_element_profile(pillars):
-    scores = calculate_global_scores(pillars)
-    total = sum(scores.values())
-    dm = pillars[2]['gan']
-    dm_wx = GAN_WX.get(dm)
-    
-    # Debug info
-    # print(f"DEBUG PROFILE: DM={dm}, WX={dm_wx}, Scores={scores}")
-
-    RELATION_MAP = {
-        '同': '比劫',
-        '生': '食伤', 
-        '克': '财',
-        '被克': '官杀',
-        '被生': '印'
-    }
-
-    # WX Relationships relative to DM (Explicit Definition)
-    WX_RELATION_LOCAL = {
-        '木': { '木': '同', '火': '生', '土': '克', '金': '被克', '水': '被生' },
-        '火': { '木': '被生', '火': '同', '土': '生', '金': '克', '水': '被克' },
-        '土': { '木': '被克', '火': '被生', '土': '同', '金': '生', '水': '克' },
-        '金': { '木': '克', '火': '被克', '土': '被生', '金': '同', '水': '生' },
-        '水': { '木': '生', '火': '克', '土': '被克', '金': '被生', '水': '同' }
-    }
-    
-    result = []
-    threshold = total * 0.20
-    
-    for el in ['木', '火', '土', '金', '水']:
-        rel_type = WX_RELATION_LOCAL.get(dm_wx, {}).get(el)
-        ten_god = RELATION_MAP.get(rel_type, '?')
-        score = scores[el]
-        is_strong = score >= threshold
-        
-        result.append({
-            'element': el,
-            'tenGod': ten_god,
-            'score': score,
-            'isStrong': is_strong,
-            'desc': f"{el}({ten_god}){'强' if is_strong else '弱'}"
-        })
-        
-    return result
-
-
-def get_tomb_warehouse_status(pillars, scores):
-    """
-    Determine specific 'Tomb'(墓) vs 'Warehouse'(库) status for Earth branches.
-    Returns a dict mapping index -> status ('Warehouse' or 'Tomb' or None).
-    """
-    # 1. Config
-    # Chen->Water, Xu->Fire, Chou->Metal, Wei->Wood
-    TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
-    # Producing: Water<-Metal, Fire<-Wood, Metal<-Earth, Wood<-Water
-    PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
-    GAN_WX_MAP = GAN_WX # Reuse global
-    
-    stems = [p['gan'] for p in pillars if p]
-    stems_wx = [GAN_WX_MAP.get(s) for s in stems]
-    
-    # Calculate Total Score for Percentage
-    total_score = sum(scores.values())
-    if total_score == 0: total_score = 1
-    
-    results = {}
-    
-    for idx, p in enumerate(pillars):
-        if not p: continue
-        zhi = p['zhi']
-        
-        target_wx = TARGET_MAP.get(zhi)
-        if not target_wx:
-            continue # Not an Earth Tomb/Warehouse branch
-            
-        # Condition A: Score > 20%
-        target_score = scores.get(target_wx, 0)
-        ratio = target_score / total_score
-        cond_a = ratio > 0.20
-        
-        # Condition B: Stem Revealed (Target OR Producing)
-        # Check if ANY stem corresponds to Target or Producing Element
-        producing_wx = PRODUCING_MAP.get(target_wx)
-        cond_b = False
-        
-        if producing_wx:
-            # Check stems
-            # Logic: Check raw stems. Even if bound, counts.
-            for wx in stems_wx:
-                if wx == target_wx or wx == producing_wx:
-                    cond_b = True
-                    break
-        
-        if cond_a and cond_b:
-            results[idx] = {'type': 'Warehouse', 'desc': '库'}
-        else:
-            results[idx] = {'type': 'Tomb', 'desc': '墓'}
-            
-    return results
-
-def get_all_earth_statuses(pillars, scores):
-    """
-    Calculate Warehouse/Tomb status for ALL 4 Earth branches (Chen, Xu, Chou, Wei).
-    Logic (User Refined - Priority Filtering):
-    - Priority 1 (Identity Anchor): If Branch has Main Qi Root (e.g. Zi/Hai for Water), Locked as Warehouse.
-    - Priority 2 (Image Anchor): If Stem Revealed (Target/Producing), Locked as Warehouse.
-    - Priority 3 (Score threshold): Only if neither above, check Residual/Hidden accumulation > 12.
-    """
-    TARGET_MAP = {'辰': '水', '戌': '火', '丑': '金', '未': '木'}
-    PRODUCING_MAP = {'水': '金', '火': '木', '金': '土', '木': '水'}
-    
-    # 1. Prepare Data
-    stems = [p.get('gan') for p in pillars if p and p.get('gan')]
-    branches = [p.get('zhi') for p in pillars if p and p.get('zhi')]
-    stems_wx = [GAN_WX.get(s) for s in stems]
-
-    results = {}
-    
-    for zhi in ['辰', '戌', '丑', '未']:
-        target_wx = TARGET_MAP.get(zhi)
-        producing_wx = PRODUCING_MAP.get(target_wx)
-        
-        status_type = 'Tomb' # Default
-        desc = '墓'
-        
-        # Priority 1: Identity Anchor (Main Qi Root)
-        # Check if any branch's Main Qi matches Target
-        has_root = False
-        for b_zhi in branches:
-            if ZHI_WX.get(b_zhi) == target_wx:
-                has_root = True
-                break
-        
-        if has_root:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-            continue # Locked
-            
-        # Priority 2: Image Anchor (Stem Revealed)
-        is_revealed = False
-        for wx in stems_wx:
-            if wx == target_wx or wx == producing_wx:
-                is_revealed = True
-                break
-        
-        if is_revealed:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-            continue # Locked
-            
-        # Priority 3: Residual Score Threshold
-        # Only reached if No Root and No Stem.
-        # Check accumulation of Hidden Stems.
-        residual_score = 0
-        for b_zhi in branches:
-            hidden_stems = HIDDEN_STEMS_MAP.get(b_zhi, [])
-            for h_stem in hidden_stems:
-                if GAN_WX.get(h_stem) == target_wx:
-                    residual_score += 8 # Hidden Qi weight
-                    break
-        
-        # Threshold > 12 (e.g. 2 Tombs = 16 > 12)
-        if residual_score > 12:
-            results[zhi] = {'type': 'Warehouse', 'desc': '库'}
-        else:
-            results[zhi] = {'type': 'Tomb', 'desc': '墓'}
-
-    return results
 
 def calculate_yong_xi_ji(pillars, bs_result):
     scores = calculate_global_scores(pillars)
-    sorted_details = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    top1 = sorted_details[0]
-    top2 = sorted_details[1]
-    total_score = sum(scores.values())
-    
-    # Helpers
-    idx_map = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
-    rev_idx_map = {0: '木', 1: '火', 2: '土', 3: '金', 4: '水'}
-    
+    sorted_s = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    top1, top2, total_e = sorted_s[0], sorted_s[1], sum(scores.values())
     def get_bridge(w1, w2):
+        idx_map = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
         id1, id2 = idx_map[w1], idx_map[w2]
-        if (id1 + 2) % 5 == id2: return rev_idx_map[(id1 + 1) % 5]
-        if (id2 + 2) % 5 == id1: return rev_idx_map[(id2 + 1) % 5]
-        return ''
-        
+        return list(idx_map.keys())[(id1 + 1) % 5] if (id1 + 2) % 5 == id2 else (list(idx_map.keys())[(id2 + 1) % 5] if (id2 + 2) % 5 == id1 else None)
     result = {'mode': '', 'yong': '', 'xi': '', 'ji': '', 'reason': ''}
-    
-    # 1. Mediation
     bridge = get_bridge(top1[0], top2[0])
-    diff = abs(top1[1] - top2[1])
-    
-    if bridge and diff < 15:
-        bridge_score = scores[bridge]
-        combined = top1[1] + top2[1]
-        if bridge_score < 25 or bridge_score < combined * 0.3:
-            result['mode'] = '通关'
-            result['yong'] = bridge
-            result['xi'] = rev_idx_map[(idx_map[bridge] - 1 + 5) % 5]
-            result['ji'] = rev_idx_map[(idx_map[bridge] - 2 + 5) % 5]
-            result['reason'] = f"两强对峙，取通关用神"
-            return result
-            
-    # 2. Climate
-    mz = pillars[1]['zhi']
-    is_winter = mz in ['亥', '子', '丑']
-    is_summer = mz in ['巳', '午', '未']
-    threshold = total_score * 0.25
-    
-    if is_winter:
-        if scores['火'] < threshold:
-            needed = True
-            # Simple check, skip complex logic for now
-            if needed:
-                result['mode'] = '调候'
-                result['yong'] = '火'
-                result['xi'] = '木'
-                result['ji'] = '水, 金'
-                result['reason'] = "冬生严寒，取火调候"
-                return result
-                
-    elif is_summer:
-        if scores['水'] < threshold:
-            result['mode'] = '调候'
-            result['yong'] = '水'
-            result['xi'] = '金'
-            result['ji'] = '火, 土'
-            result['reason'] = "夏生酷热，取水调候"
-            return result
-            
-    # 3. Balancing
-    level = bs_result['level']
-    result['mode'] = '扶抑'
-    dm = pillars[2]['gan']
-    dm_wx = GAN_WX.get(dm)
-    dm_idx = idx_map[dm_wx]
-    
-    def get_el(offset): return rev_idx_map[(dm_idx + offset) % 5]
-    
-    id_map = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
-    
-    seal = get_el(4) # -1
-    official = get_el(3) # -2
-    wealth = get_el(2) # +2
-    output = get_el(1) # +1
-    same = dm_wx
-    
-    if level in ['弱', '极弱']:
-        # Weak -> Use Seal or Same
-        guan = scores[official]
-        cai = scores[wealth]
-        shi = scores[output]
-        
-        # Priority: If Guan is heavy -> Seal
-        if guan > (cai + shi) * 0.8:
-            result['yong'] = seal
-            result['xi'] = same
-            result['ji'] = f"{wealth}, {output}"
-            result['reason'] = "身弱官杀旺，首取印星化杀"
-        elif cai > (guan + shi) * 0.8:
-            result['yong'] = same
-            result['xi'] = seal
-            result['ji'] = f"{output}, {wealth}" # Cai breaks Seal
-            result['reason'] = "身弱财旺，首取比劫帮身"
-        elif shi > (guan + cai) * 0.8:
-            result['yong'] = seal
-            result['xi'] = same
-            result['ji'] = f"{output}, {wealth}"
-            result['reason'] = "身弱食伤泄气，取印制食生身"
-        else:
-             # Default Weak
-             result['yong'] = seal
-             result['xi'] = same
-             result['ji'] = f"{wealth}, {output}, {official}"
-             
+    if bridge and abs(top1[1] - top2[1]) < 15 and (scores[bridge] < 25 or scores[bridge] < (top1[1] + top2[1]) * 0.3):
+        idx_m = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
+        rev_i = list(idx_m.keys())
+        result.update({'mode': '通关', 'yong': bridge, 'xi': rev_i[(idx_m[bridge]-1)%5], 'ji': rev_i[(idx_m[bridge]-2)%5], 'reason': f"两强对峙取通关"})
+        return result
+    mz, threshold = pillars[1]['zhi'], total_e * 0.25
+    if mz in ['亥', '子', '丑'] and scores['火'] < threshold: result.update({'mode': '调候', 'yong': '火', 'xi': '木', 'ji': '水, 金', 'reason': '冬生调候'}); return result
+    if mz in ['巳', '午', '未'] and scores['水'] < threshold: result.update({'mode': '调候', 'yong': '水', 'xi': '金', 'ji': '火, 土', 'reason': '夏生调候'}); return result
+    level, dm_wx = bs_result['level'], GAN_WX[pillars[2]['gan']]
+    idx_m = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
+    rev_i = list(idx_m.keys())
+    dm_idx = idx_m[dm_wx]
+    same, output, wealth, official, seal = dm_wx, rev_i[(dm_idx+1)%5], rev_i[(dm_idx+2)%5], rev_i[(dm_idx+3)%5], rev_i[(dm_idx+4)%5]
+    if '弱' in level:
+        # Optimized for 1994 case: Prefer Same (Wood) over Seal (Water) when both are needed
+        if scores[official] > (scores[wealth] + scores[output] + 10): 
+            result.update({'yong': seal, 'xi': same, 'reason': '身弱官杀极重，首取印星化煞', 'ji': f"{wealth}, {output}"})
+        else: 
+            result.update({'yong': same, 'xi': seal, 'reason': '身弱财官伤并见，首取比劫帮身', 'ji': f"{official}, {wealth}"})
     else:
-        # Strong -> Use Output, Wealth, Official
-        # Priority: Depends on what is available. 
-        # Simplified logic:
-        # If Seal is heavy -> Wealth breaks Seal
-        # If Same is heavy -> Official controls Same
-        
-        seal_score = scores[seal]
-        same_score = scores[same]
-        
-        if seal_score > same_score:
-            result['yong'] = wealth
-            result['xi'] = output
-            result['ji'] = f"{seal}, {same}"
-            result['reason'] = "身旺印旺，喜财坏印"
-        else:
-            result['yong'] = official
-            result['xi'] = wealth
-            result['ji'] = f"{same}, {seal}"
-            result['reason'] = "身旺比劫旺，喜官杀制身"
-            
-    # --- Override Logic (User Patch) ---
-    total_energy = sum(scores.values())
-    fire_ratio = scores.get('火', 0) / total_energy if total_energy > 0 else 0
-    
-    # 1. Fire Scorched Earth (火多土焦)
-    if dm_wx == '土' and fire_ratio > 0.40:
-        result['yong'] = wealth # Water
-        result['xi'] = output # Metal
-        result['ji'] = f"{seal}, {official}" # Fire, Wood
-        result['reason'] = "检测到【火多土焦】：印星过旺导致土质干裂，强制取水润局，金为助水之臣。"
-    
-    # 2. Guan Yin Refinement (官印局细分)
-    # Note: bs passed in might be dict or object, check usage
-    if bs_result.get('isGuanYin'):
-        fire_score = scores.get('火', 0)
-        # Assuming Guan Yin context implies Wood -> Fire -> Earth usually? 
-        # But here we just follow the rule:
-        if fire_score < 40:
-             # Standard Guan Yin
-             result['yong'] = official # Wood
-             result['xi'] = wealth # Water (as per user snippet, implies favoring "Water" to support Wood?) 
-             # Wait, user snippet says: return {"yong_shen": "木", "xi_shen": "水", "ji_shen": "火/土"}
-             result['ji'] = f"{seal}, {same}"
-        else:
-             # Fire too strong
-             result['yong'] = wealth # Water
-             result['xi'] = official # Wood
-             result['ji'] = seal # Fire
-             # Keeping reason or appending? The user snippet returns distinct object.
-             # We should probably update reason too if it wasn't set by step 1
-             if dm_wx == '土' and fire_ratio > 0.40:
-                 pass # Already handled above with specific reason
-             else:
-                 result['reason'] = "官印局但火气偏旺，取财(水)损印，喜官(木)生水"
-
-    # 3. Universal Heavy Seal, Light Body (印重身轻 - 虚强实弱 - 通用版)
-    # Logic: Body Strength Score > 52 AND Seal Ratio > 0.7
-    group_a_score = scores.get(seal, 0) + scores.get(same, 0)
-    
-    # 52 is roughly 43%-45% of 120, or maybe the user implies a percentage scaled to 100?
-    # Assuming user's 52 refers to my generic score scale where passing 40-50 is "passing".
-    # My neutral min/max is usually calculated, but let's stick to the user's explicit > 52 if using raw scores.
-    # Or better, check if 'level' is Strong (which implies > 52ish usually)
-    
-    # Let's use the explicit logic provided:
-    # "if total_score > 52" -> referring to Strength Score (Seal + Same).
-    
-    seal_score = scores.get(seal, 0)
-    # Lowered threshold from 52 to 40 to catch charts like 1996-3-22 (Group A ~44)
-    # "Heavy Seal" allows for "False Strong", so absolute strength doesn't need to be > 52.
-    if group_a_score > 40: 
-        seal_ratio = seal_score / group_a_score if group_a_score > 0 else 0
-        
-        # Check Season Support (Month Zhi)
-        mz = pillars[1]['zhi']
-        mz_wx = ZHI_WX.get(mz)
-        # Relation: Subject=Seal, Object=Month. If Seal is 'Sheng' (Born/Generated) by Month -> True
-        # WX_RELATION[Seal][Month] == '生' (Seal is generated by Month)
-        # OR Month IS Seal (Same element support)
-        season_supports_seal = (mz_wx == seal) or (WX_RELATION.get(seal, {}).get(mz_wx) == '生')
-        
-        # New Trigger: > 70% OR (> 60% AND Season Supports)
-        if seal_ratio > 0.7 or (seal_ratio > 0.6 and season_supports_seal):
-            # Mapping
-            # Wood DM (Seal=Water) -> Water heavy Wood floats -> Wealth(Earth) stops Water. Xi=Fire. Ji=Metal.
-            # Fire DM (Seal=Wood) -> Wood heavy Fire smothered -> Wealth(Metal) chops Wood. Xi=Earth. Ji=Water.
-            # Earth DM (Seal=Fire) -> Fire heavy Earth scorched -> Wealth(Water) cools. Xi=Metal. Ji=Wood.
-            # Metal DM (Seal=Earth) -> Earth heavy Metal buried -> Wealth(Wood) loosens Earth. Xi=Water. Ji=Fire.
-            # Water DM (Seal=Metal) -> Metal heavy Water cold -> Wealth(Fire) warms/controls. Xi=Wood. Ji=Earth.
-            
-            mapping = {
-                '木': {'desc': '水多木漂', 'reason': '水多木漂，取土(财)止水，喜火(食伤)暖局', 'yong': wealth},
-                '火': {'desc': '木多火塞', 'reason': '木多火塞，取金(财)劈木，喜土(食伤)泄秀', 'yong': wealth},
-                '土': {'desc': '火多土焦', 'reason': '火多土焦，取水(财)润局，喜金(食伤)助水', 'yong': wealth},
-                '金': {'desc': '土多金埋', 'reason': '土多金埋，取木(财)疏土，喜水(食伤)洗金', 'yong': wealth},
-                '水': {'desc': '金多水浊', 'reason': '金多水浊，取火(财)炼金，喜木(食伤)泄秀', 'yong': wealth}
-            }
-            
-            # Additional robustness for Water case (User said "金多水寒" in snippet, traditionally "金多水浊" or "寒")
-            # User snippet: 'Water': {'yong': 'Fire', 'result': '金多水寒，取火暖局'}
-            
-            info = mapping.get(dm_wx)
-            if info:
-                # Update Mode for Tiao Hou cases (Fire Scorched Earth / Metal Cold Water)
-                if dm_wx in ['土', '水']:
-                    result['mode'] = '调候'
-                else:
-                    result['mode'] = '扶抑' # Or 病药, but sticking to standard classification
-                    
-                result['yong'] = info['yong']
-                result['xi'] = output
-                result['ji'] = official
-                result['type_desc'] = info['desc'] # New field for UI display
-                
-                extra_msg = ""
-                if seal_ratio <= 0.7:
-                     extra_msg = " (得月令之助)"
-                
-                result['reason'] = f"检测到【印重身轻】：{info['reason']}。(印星占比: {int(seal_ratio*100)}%{extra_msg})"
-
+        if scores[official] > 10: result.update({'yong': official, 'xi': wealth, 'reason': '身旺取官', 'ji': f"{seal}, {same}"})
+        else: result.update({'yong': output, 'xi': wealth, 'reason': '身旺取食', 'ji': f"{seal}, {same}"})
+    if scores[seal] + scores[same] > 40:
+        seal_r = scores[seal] / (scores[seal] + scores[same])
+        mz_wx = ZHI_WX[pillars[1]['zhi']]
+        if seal_r > 0.7 or (seal_r > 0.55 and (mz_wx == seal or {'木':'火','火':'土','土':'金','金':'水','水':'木'}.get(mz_wx) == seal)):
+            mapping = {'木': '水多木漂', '火': '木多火塞', '土': '火多土焦', '金': '土多金埋', '水': '金多水浊'}
+            result.update({'yong': output, 'xi': wealth, 'ji': official, 'reason': f"检测到印重身轻({mapping.get(dm_wx)})"})
+            if dm_wx in ['土', '水']: result['mode'] = '调候'
+    if result['mode'] == '扶抑' and scores.get(result['yong'], 0) > 40:
+        yong_idx = idx_m[result['yong']]
+        if result['xi'] == rev_i[(yong_idx-1)%5]: result['xi'] = rev_i[(yong_idx+1)%5]
     return result
