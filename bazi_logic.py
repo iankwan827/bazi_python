@@ -807,6 +807,10 @@ def calculate_bazi(date, gender):
 
 
 
+
+
+
+
 # --- Advanced Logic: Body Strength & Yong/Xi ---
 
 def get_stem_interactions_map(pillars):
@@ -879,10 +883,26 @@ def calculate_body_strength(pillars):
             clashed = {'子':'午','丑':'未','寅':'申','卯':'酉','辰':'戌','巳':'亥','午':'子','未':'丑','申':'寅','酉':'卯','戌':'辰','亥':'巳'}.get(zhi) in all_zhis
             score *= (1.5 if identity == 'Warehouse' else 0.2) if clashed else 0.5
             if zhi in void_branches: score *= 0.3
-        if is_same_party(zhi_wx): return score
-        if is_month and WX_RELATION[dm_wx][zhi_wx] == '克' and WX_RELATION[dm_wx][ZHI_WX[pillars[2]['zhi']]] == '生':
-            is_guan_yin = True
-            return score * 0.8
+        if is_same_party(zhi_wx):
+            final_s = score
+            if is_month: # If Month is Seal, and Day is Official -> Guan-Yin
+                dz_rel = WX_RELATION[dm_wx][ZHI_WX[pillars[2]['zhi']]]
+                if dz_rel == '克':
+                    is_guan_yin = True
+                    final_s = score * 0.8
+                    logs.append("判定:月印日官 -> 触发官印相生(月令校准)")
+            return final_s
+        else:
+            if is_month:
+                if WX_RELATION[dm_wx][zhi_wx] == '克' and WX_RELATION[dm_wx][ZHI_WX[pillars[2]['zhi']]] == '生':
+                    is_guan_yin = True
+                    logs.append("判定:月官日印 -> 触发官印相生(月令转化)")
+                    return score * 0.8
+            elif idx == 2: # Day Zhi
+                if WX_RELATION[dm_wx][zhi_wx] == '克' and WX_RELATION[dm_wx][ZHI_WX[pillars[1]['zhi']]] == '生':
+                    is_guan_yin = True
+                    logs.append("判定:日官月印 -> 触发官印相生(日支转化)")
+                    return score * 0.8
         return 0
     total_score += apply_branch_score(1, weights['monthZhi'], True)
     max_score += weights['monthZhi']
@@ -894,7 +914,9 @@ def calculate_body_strength(pillars):
         total_score += apply_branch_score(4, weights['dyZhi']); max_score += weights['dyZhi']
         if len(pillars) > 5: total_score += apply_branch_score(5, weights['lnZhi']); max_score += weights['lnZhi']
     level = '身强' if total_score > max_score * 0.52 else ('身弱' if total_score < max_score * 0.48 else '中和')
-    if level == '中和' and is_guan_yin: level = '身强'
+    if is_guan_yin:
+        level = '身强'
+        logs.append("官印相生：流通有情，状态提升为身强")
     return {'total_score': total_score, 'max_score': max_score, 'percentage': round((total_score / max_score) * 100, 1) if max_score > 0 else 0, 'level': level, 'logs': logs, 'is_guan_yin': is_guan_yin}
 
 def calculate_global_scores(pillars):
@@ -930,7 +952,6 @@ def calculate_yong_xi_ji(pillars, bs_result):
     dm_idx = idx_m[dm_wx]
     same, output, wealth, official, seal = dm_wx, rev_i[(dm_idx+1)%5], rev_i[(dm_idx+2)%5], rev_i[(dm_idx+3)%5], rev_i[(dm_idx+4)%5]
     if '弱' in level:
-        # Optimized for 1994 case: Prefer Same (Wood) over Seal (Water) when both are needed
         if scores[official] > (scores[wealth] + scores[output] + 10): 
             result.update({'yong': seal, 'xi': same, 'reason': '身弱官杀极重，首取印星化煞', 'ji': f"{wealth}, {output}"})
         else: 
